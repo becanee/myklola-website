@@ -108,14 +108,15 @@ export function LoginForm() {
         Enter your credentials to reach your Klola workspace.
       </motion.p>
 
-      <motion.form
-        onSubmit={handleSubmit(onSubmit)}
-        noValidate
+      {/* Plain <form>: a motion component here only buys an entrance fade, and
+          it puts a wrapper between the DOM form and its submit handler for no
+          benefit. The fade lives on the wrapper instead. */}
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: dur(0.7), delay: dur(0.18), ease: EASE }}
-        className="mt-9 space-y-4"
       >
+        <form onSubmit={handleSubmit(onSubmit)} noValidate className="mt-9 space-y-4">
         <Input
           type="email"
           label="Work email *"
@@ -199,8 +200,7 @@ export function LoginForm() {
           )}
         </AnimatePresence>
 
-        {/* ponytail: submit is wired to nothing yet, so it is not disabled
-            while idle — re-enable the busy lock with the real auth call. */}
+        {/* No busy lock needed: the button disables itself while `busy`. */}
         <motion.div whileTap={{ scale: 0.99 }} transition={SPRING_PRESS}>
           <Button
             type="submit"
@@ -218,7 +218,8 @@ export function LoginForm() {
             )}
           </Button>
         </motion.div>
-      </motion.form>
+        </form>
+      </motion.div>
 
       <motion.div
         transition={{ duration: dur(0.7), delay: dur(0.32) }}

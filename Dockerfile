@@ -42,6 +42,24 @@ ENV NODE_ENV=production
 # Uncomment the following line in case you want to disable telemetry during the build.
 # ENV NEXT_TELEMETRY_DISABLED=1
 
+# NEXT_PUBLIC_* is inlined into the browser bundle at BUILD time. Without it
+# here, `process.env.NEXT_PUBLIC_POSTBASE_*` stays a runtime lookup in client
+# code, resolves to undefined, and getPostbaseClient() throws the instant it is
+# called — the login form dies before any request leaves the browser.
+# Pass with `docker build --build-arg NEXT_PUBLIC_POSTBASE_URL=...`.
+ARG NEXT_PUBLIC_POSTBASE_URL
+ARG NEXT_PUBLIC_POSTBASE_ANON_KEY
+ARG NEXT_PUBLIC_POSTBASE_PROJECT_ID
+ENV NEXT_PUBLIC_POSTBASE_URL=$NEXT_PUBLIC_POSTBASE_URL
+ENV NEXT_PUBLIC_POSTBASE_ANON_KEY=$NEXT_PUBLIC_POSTBASE_ANON_KEY
+ENV NEXT_PUBLIC_POSTBASE_PROJECT_ID=$NEXT_PUBLIC_POSTBASE_PROJECT_ID
+
+# Fail here rather than shipping a dead auth client.
+RUN test -n "$NEXT_PUBLIC_POSTBASE_URL" \
+ && test -n "$NEXT_PUBLIC_POSTBASE_ANON_KEY" \
+ && test -n "$NEXT_PUBLIC_POSTBASE_PROJECT_ID" \
+ || { echo "ERROR: missing NEXT_PUBLIC_POSTBASE_* build args"; exit 1; }
+
 # Build Next.js application
 RUN npx next build
 
