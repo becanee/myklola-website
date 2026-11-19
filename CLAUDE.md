@@ -69,33 +69,33 @@ Page content is co-located as module-level `const` arrays inside each section fi
 
 **The contact form has no backend.** `onSubmit` in [comp-form.tsx](src/modules/contacts/comp-form.tsx) validates with zod and sets a success state; a `ponytail:` comment marks where the submission call belongs. Keep those `ponytail:` markers — they name deliberate simplifications and their upgrade path.
 
-### Postbase (backend)
+### Auth & API routes
 
-Postbase is the self-hosted BaaS (`postbasejs`, Supabase-shaped API: `from()`, `auth`, `storage`, `rpc`). Two clients live in `src/services/postbase/`:
+Next.js sits between the browser and the Klola gateway: tokens are written to httpOnly cookies by our own route handlers and **never** reach client JavaScript.
 
-| File | Key | Use |
-|---|---|---|
-| [client.ts](src/services/postbase/client.ts) → `getPostbaseClient()` | `NEXT_PUBLIC_POSTBASE_ANON_KEY` | Browser-safe, RLS-enforced. Default choice. |
-| [server.ts](src/services/postbase/server.ts) → `getPostbaseAdmin()` | `POSTBASE_SERVICE_KEY` | Server only, **bypasses RLS**. Guarded by `import "server-only"`. |
+| Route | Purpose |
+|---|---|
+| [POST /api/v1/login](src/app/api/v1/login/route.ts) | Forwards credentials to `{GATEWAY_URL}/{PROJECT_ID}/token`, sets the three cookies. |
+| [GET /api/v1/session](src/app/api/v1/session/route.ts) | Forwards the refresh token to `.../session`, reissues rotated cookies. Returns 401 when the gateway answers `{session: null}`. |
 
-Both are lazy singletons — `createClient` starts a token-refresh timer, so a per-call client would schedule duplicate refreshes.
-
-- `createClient(url, key, options)` — the third argument is an **options object** (`{ projectId }`), not a bare project ID. Passing a string is silently accepted and yields `projectId: ""`, which builds broken `/api/auth/v1//token` URLs.
-- Env lives in `.env.local` (gitignored); `.env.example` documents the names. `POSTBASE_SERVICE_KEY` must never gain a `NEXT_PUBLIC_` prefix or be imported from a Client Component.
-- `.dockerignore` keeps `.env*` out of the image — otherwise the service key ships inside it.
-- Auth: `auth.signInWithPassword({ email, password, rememberMe })` returns `{ data: { user, session }, error }`. Wired up in [form.tsx](src/modules/auth/login/_comp/form.tsx).
-- **Three clients, three jobs** — don't collapse them: `client.ts` (browser, anon key), `server.ts` (admin, service key), `server-session.ts` (per-request, anon key + cookie adapter, read-only `setAll`). The last one is what Server Components use to identify the user.
+- All `/api/v1` responses go through `success()` / `failed()` in [responseWrapper.ts](src/lib/responseWrapper.ts) — one envelope (`success`, `httpCode`, `author`, `message`, `data`). Never hand-roll `NextResponse.json`, and never return tokens in the body.
+- Cookie names live in [auth-cookies.ts](src/lib/auth-cookies.ts): `__klola_access_token`, `__klola_refresh_token`, `__klola_user`. Route and proxy both import from there so they cannot drift.
+- Env is server-only: `GATEWAY_URL`, `PROJECT_ID`, `GATEWAY_API_KEY` have **no** `NEXT_PUBLIC_` prefix, so `next build` needs none of them and a Docker image without build args still works. Set them at container runtime.
+- The gateway requires `Authorization: Bearer $GATEWAY_API_KEY`; without it every call returns `401 {"error":"Missing API key"}`.
+- The `/session` endpoint does **not** return `refreshTokenExpiresAt` (login does). The session route decodes the refresh JWT's `exp` claim instead — otherwise the refresh cookie degrades to a session cookie on every check.
+- Client side: [\_logic.tsx](src/modules/auth/login/_logic.tsx) exports `loginUser()` and `useLogin()`. `loginUser` never throws for expected failures; it returns a discriminated `LoginResult`.
 
 ### Route protection (Proxy)
 
 Next.js 16 renamed Middleware to Proxy. The guard is [src/proxy.ts](src/proxy.ts) exporting `proxy` (not `middleware`), with [src/routes.ts](src/routes.ts) as the single source of truth for `PUBLIC_ROUTES` / `PROTECTED_ROUTES`.
 
 - Add new paths to `src/routes.ts` **before** creating them. Anything not listed is neither public nor protected — it simply passes through unguarded.
-- `isProtectedRoute` is checked first, so public routes never pay for the `getSession()` network round-trip. Keep it that way; the proxy runs per-request.
+- `isProtectedRoute` is checked first, so public routes never run the session check. Keep it that way; the proxy runs per-request.
 - Matching is segment-aware: `/dash` covers `/dash` and `/dash/settings`, never `/dashx`.
-- The `matcher` excludes `_next/static`, `_next/image`, favicon and image/video extensions. Without that, the proxy intercepts CSS/JS and redirects break the pages being guarded.
-- **The cookie bridge is load-bearing.** The browser SDK keeps the refresh token in `localStorage` and cannot write an httpOnly cookie. On sign-in it POSTs the session to `/api/auth/callback` ([route.ts](src/app/api/auth/callback/route.ts)), which writes `postbase-session`. The proxy reads *only* that cookie — remove the callback route or `syncEndpoint` and every signed-in user is redirected straight back to `/login`.
-- The proxy redirect is an optimistic check, not authorization. Server Components still call `getPostbaseSession()` and must verify inside Server Functions too — a matcher change can silently drop proxy coverage.
+- **`/api` is excluded from the matcher.** The proxy calls `/api/v1/session` itself; matching it would recurse until the request dies. Protected pages never live under `/api`.
+- The proxy verifies by calling that session route with the incoming `Cookie` header and forwards the rotated `Set-Cookie` onto its own response — skip that and the browser keeps a refresh token the gateway already rotated away.
+- A gateway error fails **closed** (redirect to `/login`), never open.
+- The redirect is a UX gate, not authorization. When a page starts reading sensitive data, verify again in the Server Component or Server Function — a matcher change silently drops proxy coverage.
 
 ### SEO
 

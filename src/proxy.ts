@@ -1,53 +1,50 @@
+import { USER_COOKIE } from "@/lib/auth-cookies";
 import { isProtectedRoute } from "@/routes";
-import { createServerClient } from "postbasejs/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-type CookieOptions = Parameters<NextResponse["cookies"]["set"]>[2];
-
 export async function proxy(req: NextRequest) {
-  // Public routes need no session, so they skip the auth round-trip entirely —
-  // `getSession()` is a network call against Postbase, not a local check.
+  // Public routes need no session, so they skip the check entirely.
   if (!isProtectedRoute(req.nextUrl.pathname)) return NextResponse.next();
+
+  // Verify with the gateway rather than trusting the cookie's presence — a
+  // forged `__klola_user` would otherwise walk straight past this redirect.
+  // The route forwards the refresh token and returns the rotated pair, so a
+  // stale access token is renewed on the same request.
+  let session: Response;
+  try {
+    session = await fetch(new URL("/api/v1/session", req.url), {
+      headers: { cookie: req.headers.get("cookie") ?? "" },
+      cache: "no-store",
+    });
+  } catch {
+    // Gateway unreachable: fail closed to /login rather than let traffic
+    // through on an unverified cookie.
+    return NextResponse.redirect(new URL("/login", req.url));
+  }
+
+  if (!session.ok) {
+    return NextResponse.redirect(new URL("/login", req.url));
+  }
 
   const res = NextResponse.next();
 
-  const postbase = createServerClient(
-    process.env.NEXT_PUBLIC_POSTBASE_URL!,
-    process.env.NEXT_PUBLIC_POSTBASE_ANON_KEY!,
-    {
-      projectId: process.env.NEXT_PUBLIC_POSTBASE_PROJECT_ID!,
-      cookies: {
-        getAll: () => req.cookies.getAll(),
-        setAll: (cookies) =>
-          cookies.forEach((c) =>
-            res.cookies.set(c.name, c.value, c.options as CookieOptions),
-          ),
-      },
-    },
-  );
-
-  // Reads the httpOnly `postbase-session` cookie and refreshes the token if
-  // it has expired; a refresh writes rotated cookies onto `res` above.
-  const {
-    data: { session },
-  } = await postbase.auth.getSession();
-
-  if (!session) {
-    const login = NextResponse.redirect(new URL("/login", req.url));
-    // A refresh can succeed while the session is still unusable. Carry the
-    // rotated cookies onto the redirect, or the next request presents a stale
-    // refresh token and the user lands in a redirect loop.
-    res.cookies.getAll().forEach((cookie) => login.cookies.set(cookie));
-    return login;
+  // Carry the rotated cookies onto the *original* response, otherwise the
+  // browser keeps the old refresh token and the next request has to refresh
+  // again — or, worse, presents one the gateway already rotated away.
+  for (const cookie of session.headers.getSetCookie()) {
+    res.headers.append("set-cookie", cookie);
   }
 
   return res;
 }
 
 export const config = {
-  // Everything except static assets — otherwise the proxy intercepts CSS, JS,
-  // images and video, and a redirect there breaks the pages it is guarding.
+  // Static assets excluded, or the proxy intercepts CSS/JS/images and a
+  // redirect there breaks the very pages it guards.
+  // `/api` excluded: the proxy calls `/api/v1/session` itself, so matching it
+  // would recurse until the platform kills the request. Protected pages never
+  // live under `/api`, so nothing is left unguarded.
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|avif|ico|mp4|webm)$).*)",
+    "/((?!api|_next|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|avif|ico|mp4|webm)$).*)",
   ],
 };

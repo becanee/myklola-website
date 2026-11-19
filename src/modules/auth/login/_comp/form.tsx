@@ -4,13 +4,13 @@ import { Input } from "@/components/motion/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { EASE_OUT, SPRING_PRESS } from "@/lib/ease";
-import { getPostbaseClient } from "@/services/postbase/client";
+import { useLogin } from "../_logic";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertCircle, Eye, EyeOff, Loader2, Lock, Mail } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -30,8 +30,7 @@ export function LoginForm() {
   // Branch on duration, never on `initial`: the server can't know the user's
   // motion preference, so branching the start state breaks hydration.
   const dur = (d: number) => (reduce ? 0 : d);
-  const [isPending, startTransition] = useTransition();
-  const [result, setResult] = useState<"error" | null>(null);
+  const { login, pending, error } = useLogin();
   const [showPassword, setShowPassword] = useState(false);
 
   const {
@@ -45,38 +44,17 @@ export function LoginForm() {
     mode: "onChange",
   });
 
-  const onSubmit = (data: FormData) => {
-    setResult(null);
-    startTransition(async () => {
-      // Anything thrown here — misconfigured env, network failure, a Postbase
-      // outage — would otherwise escape into the error boundary and replace
-      // the whole page with "This page couldn't load". A failed sign-in is a
-      // form state, not a page failure.
-      try {
-        const { error } = await getPostbaseClient().auth.signInWithPassword({
-          email: data.email,
-          password: data.password,
-          rememberMe: data.remember,
-        });
+  const onSubmit = async (data: FormData) => {
+    const result = await login(data.email, data.password, data.remember);
+    if (!result.ok) return; // the hook already surfaced the message
 
-        if (error) {
-          setResult("error");
-          return;
-        }
-
-        router.push("/dash");
-        router.refresh();
-      } catch (err) {
-        // Must not rethrow: an async startTransition callback has no boundary
-        // above it, so throwing here replaces the page with Next's error UI.
-        console.error("[login] sign-in failed", err);
-        setResult("error");
-        throw err; // rethrow for Sentry, etc. to catch, but not for the user to see
-      }
-    });
+    // `refresh()` makes the RSC payload for /dash load after the Set-Cookie
+    // response, so the proxy sees the new cookie on the very next request.
+    router.push("/dash");
+    router.refresh();
   };
 
-  const busy = isSubmitting || isPending;
+  const busy = isSubmitting || pending;
 
   return (
     <div className="w-full max-w-[420px]">
@@ -185,9 +163,10 @@ export function LoginForm() {
           </a>
         </div>
 
-        <AnimatePresence initial={false}>
-          {result === "error" && (
+        <AnimatePresence initial={false} mode="wait">
+          {error && (
             <motion.div
+              key="error"
               role="alert"
               initial={reduce ? { opacity: 0 } : { opacity: 0, y: -6 }}
               animate={{ opacity: 1, y: 0 }}
@@ -196,14 +175,11 @@ export function LoginForm() {
               className="flex items-start gap-2 rounded-sm border border-destructive/30 bg-destructive/5 px-3 py-2.5 text-xs leading-relaxed text-destructive"
             >
               <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-              Couldn&apos;t sign you in. Check your email and password, or
-              contact your administrator.
+              {error}
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* ponytail: submit is wired to nothing yet, so it is not disabled
-            while idle — re-enable the busy lock with the real auth call. */}
         <motion.div whileTap={{ scale: 0.99 }} transition={SPRING_PRESS}>
           <Button
             type="submit"

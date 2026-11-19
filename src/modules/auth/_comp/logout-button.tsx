@@ -1,32 +1,37 @@
 "use client";
 
-import { getPostbaseClient } from "@/services/postbase/client";
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useTransition } from "react";
+import { useState } from "react";
 
 export function LogoutButton() {
   const router = useRouter();
-  const [isPending, startTransition] = useTransition();
+  const [pending, setPending] = useState(false);
+
+  async function handleLogout() {
+    setPending(true);
+    try {
+      await fetch("/api/v1/logout", { method: "POST" });
+    } catch {
+      // Navigation happens regardless — the route clears the cookies, and a
+      // user who asked to leave must not be stranded on /dash by a dead
+      // network request.
+    }
+    router.push("/");
+    router.refresh();
+  }
 
   return (
     <Button
       variant="outline"
       size="sm"
-      disabled={isPending}
-      onClick={() =>
-        startTransition(async () => {
-          // notifyListeners(SIGNED_OUT, null) clears localStorage and POSTs
-          // `{ session: null }` to syncEndpoint, which expires the cookie.
-          await getPostbaseClient().auth.signOut();
-          router.push("/login");
-          router.refresh();
-        })
-      }
+      disabled={pending}
+      aria-busy={pending}
+      onClick={handleLogout}
     >
       <LogOut className="size-3.5" />
-      {isPending ? "Keluar…" : "Keluar"}
+      {pending ? "Keluar…" : "Keluar"}
     </Button>
   );
 }
