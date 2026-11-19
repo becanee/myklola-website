@@ -48,21 +48,28 @@ export function LoginForm() {
   const onSubmit = (data: FormData) => {
     setResult(null);
     startTransition(async () => {
-      const { error } = await getPostbaseClient().auth.signInWithPassword({
-        email: data.email,
-        password: data.password,
-        rememberMe: data.remember,
-      });
+      // Anything thrown here — misconfigured env, network failure, a Postbase
+      // outage — would otherwise escape into the error boundary and replace
+      // the whole page with "This page couldn't load". A failed sign-in is a
+      // form state, not a page failure.
+      try {
+        const { error } = await getPostbaseClient().auth.signInWithPassword({
+          email: data.email,
+          password: data.password,
+          rememberMe: data.remember,
+        });
 
-      if (error) {
+        if (error) {
+          setResult("error");
+          return;
+        }
+
+        router.push("/dash");
+        router.refresh();
+      } catch (err) {
+        console.error("[login] sign-in failed", err);
         setResult("error");
-        return;
       }
-      // ponytail: no post-login route yet — sends everyone home. Point this at
-      // the dashboard once there is one, and add the /api/auth/callback route
-      // plus `syncEndpoint` so the server sees the session cookie.
-      router.push("/dash");
-      router.refresh();
     });
   };
 

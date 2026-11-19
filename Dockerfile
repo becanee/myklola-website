@@ -2,6 +2,9 @@
 # Stage 1: Dependencies Installation Stage
 # ============================================
 
+# This Dockerfile is configured for Bun lockfile installs with a Node.js build
+# For npm/pnpm or yarn, refer to the Dockerfile instead
+
 FROM oven/bun:1 AS dependencies
 
 # Set working directory
@@ -82,6 +85,9 @@ USER node
 
 # Expose port 3000 to allow HTTP traffic
 EXPOSE 3000
+
+# Origin publik untuk URL share (set sesuai domain, mis. https://zipt.site)
+# ENV APP_URL=
 
 # Start Next.js standalone server
 CMD ["node", "server.js"]
