@@ -8,7 +8,7 @@ import { usePathname } from "next/navigation";
 
 const navLinks = [
   { name: "Beranda", href: "/" },
-  { name: "Ekosistem", href: "/products" },
+  { name: "Produk", href: "/products" },
   { name: "Perusahaan", href: "/#how-it-works" },
   { name: "Hubungi Kami", href: "/contact" },
 ];
