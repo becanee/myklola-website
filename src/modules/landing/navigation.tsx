@@ -8,7 +8,7 @@ import { usePathname } from "next/navigation";
 
 const navLinks = [
   { name: "Home", href: "/" },
-  { name: "Products", href: "/#products" },
+  { name: "Products", href: "/products" },
   { name: "Company", href: "/#how-it-works" },
   { name: "Contact Us", href: "/contact" },
 ];
@@ -46,13 +46,14 @@ export function Navigation() {
         >
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group">
+            {/* Absolute paths: a bare "logo-blue.png" resolves relative to the
+                current route, so it 404s on every nested page like
+                /products/hris. */}
             <img
               src={
-                isScrolled && pathname === "/"
-                  ? "logo-blue.png"
-                  : pathname !== "/"
-                    ? "logo-blue.png"
-                    : "logo-white.png"
+                pathname === "/" && !isScrolled
+                  ? "/logo-white.png"
+                  : "/logo-blue.png"
               }
               alt="Klola Logo"
               className="w-14"

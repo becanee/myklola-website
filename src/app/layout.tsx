@@ -83,6 +83,11 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${instrumentSans.variable} ${instrumentSerif.variable} ${jetbrainsMono.variable} font-sans antialiased`} suppressHydrationWarning>
+        {/* Entrance animations start from opacity 0. Without JS they never
+            run, so every animated line would stay invisible. */}
+        <noscript>
+          <style>{`main *{opacity:1!important;transform:none!important;filter:none!important;animation:none!important}`}</style>
+        </noscript>
         {children}
       </body>
     </html>
