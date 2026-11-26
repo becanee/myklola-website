@@ -1,0 +1,97 @@
+$ next dev --port "3010"
+[browser] A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+https://react.dev/link/hydration-mismatch
+
+  ...
+    <RedirectErrorBoundary router={{...}}>
+      <InnerLayoutRouter url="/products/..." tree={[...]} params={{}} renderTree={{...}} segmentPath={[...]} ...>
+        <SegmentViewNode type="page" pagePath="products/h...">
+          <SegmentTrieNode>
+          <HrisPage>
+            <Navigation>
+            <HrisModules>
+              <main>
+                <Hero>
+                <Features>
+                <Cta product={{slug:"hris", ...}}>
+                  <ProductCta product={{slug:"hris", ...}}>
+                    <CtaBand index="01" title="Mulai dari..." body="Kami bantu..." imageSrc="/products/..." ...>
+                      <section className="relative i...">
+                        <div aria-hidden={true} className="pointer-ev...">
+                          <motion.img src="/products/..." alt="" width={793} height={592} loading="lazy" decoding="async" ...>
+                            <img
+                              src="/products/hris-cta.png"
+                              alt=""
+                              width={793}
+                              height={592}
++                             loading="lazy"
+-                             loading="eager"
+                              decoding="async"
+                              className="absolute inset-0 h-full w-full object-cover opacity-80 grayscale object-[38%_..."
+                              style={{transform:"scale(1.06)"}}
+                              ref={function useMotionRef.useCallback}
+                            >
+                          ...
+                        ...
+            ...
+        ...
+      ...
+ 
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+[browser] A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+https://react.dev/link/hydration-mismatch
+
+  ...
+    <RedirectErrorBoundary router={{...}}>
+      <InnerLayoutRouter url="/products/..." tree={[...]} params={{}} renderTree={{...}} segmentPath={[...]} ...>
+        <SegmentViewNode type="page" pagePath="products/h...">
+          <SegmentTrieNode>
+          <HrisPage>
+            <Navigation>
+            <HrisModules>
+              <main>
+                <Hero>
+                <Features>
+                <Cta product={{slug:"hris", ...}}>
+                  <ProductCta product={{slug:"hris", ...}}>
+                    <CtaBand index="01" title="Mulai dari..." body="Kami bantu..." imageSrc="/products/..." ...>
+                      <section className="relative i...">
+                        <div aria-hidden={true} className="pointer-ev...">
+                          <motion.img src="/products/..." alt="" width={793} height={592} loading="lazy" decoding="async" ...>
+                            <img
+                              src="/products/hris-cta.png"
+                              alt=""
+                              width={793}
+                              height={592}
++                             loading="lazy"
+-                             loading="eager"
+                              decoding="async"
+                              className="absolute inset-0 h-full w-full object-cover opacity-80 grayscale object-[38%_..."
+                              style={{transform:"scale(1.06)"}}
+                              ref={function useMotionRef.useCallback}
+                            >
+                          ...
+                        ...
+            ...
+        ...
+      ...
+ 
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
