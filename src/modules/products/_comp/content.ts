@@ -86,7 +86,7 @@ const ESS_TILES: Feature[] = [
 ];
 
 export const ESS_CONTENT = {
-  title: "Employee Self-Service, di dalam HRIS.",
+  title: "Employee Self-Service, di dalam Core HRIS.",
   intro:
     "Karyawan mengurus kebutuhannya lewat myKlola; HR menerima pengajuan yang sudah rapi.",
   tiles: ESS_TILES,
@@ -97,14 +97,14 @@ export const PRODUCTS: ProductContent[] = [
   {
     slug: "hris",
     index: "01",
-    name: "HRIS",
-    longName: "HRIS",
+    name: "Core HRIS",
+    longName: "Core HRIS",
     summary:
       "Profil karyawan, struktur organisasi, kehadiran, dan laporan HR. Termasuk Employee Self-Service.",
     metaDescription:
-      "HRIS Klola menyatukan data karyawan, struktur organisasi, kehadiran, dan laporan HR dalam satu catatan — termasuk Employee Self-Service.",
+      "Core HRIS Klola menyatukan data karyawan, struktur organisasi, kehadiran, dan laporan HR dalam satu catatan — termasuk Employee Self-Service.",
     hero: {
-      eyebrow: "HRIS",
+      eyebrow: "Core HRIS",
       title: ["Satu profil untuk", "setiap orang."],
       subtitle:
         "Data karyawan, struktur organisasi, kehadiran, dan laporan HR Manager ada di satu catatan yang sama. Termasuk Employee Self-Service untuk kebutuhan harian karyawan.",
@@ -112,7 +112,7 @@ export const PRODUCTS: ProductContent[] = [
       caption: "dasbor HR Manager",
     },
     features: {
-      eyebrow: "Yang dicatat HR tiap hari",
+      eyebrow: "Modul Core HRIS",
       statement: "Yang dicatat HR tiap hari.",
       intro:
         "Enam hal yang paling sering dibuka tim HR — semuanya tersimpan di tempat yang sama, siap dipakai modul lain.",
@@ -175,7 +175,7 @@ export const PRODUCTS: ProductContent[] = [
       caption: "register payroll bulanan",
     },
     features: {
-      eyebrow: "Dari kehadiran ke slip gaji",
+      eyebrow: "Modul Payroll",
       statement: "Dari kehadiran ke slip gaji.",
       intro:
         "Perhitungan yang sama dipakai tim HR, finance, dan auditor — tidak ada angka yang disusun ulang di spreadsheet terpisah.",
@@ -238,7 +238,7 @@ export const PRODUCTS: ProductContent[] = [
       caption: "9 Grid Matrix",
     },
     features: {
-      eyebrow: "Peta kinerja per orang, per departemen",
+      eyebrow: "Modul Performance",
       statement: "Peta kinerja per orang, per departemen.",
       intro:
         "Dari sembilan kotak ke rencana tindak lanjut — supaya keputusan tentang orang berdiri di atas data, bukan ingatan.",
@@ -301,7 +301,7 @@ export const PRODUCTS: ProductContent[] = [
       caption: "portal karier",
     },
     features: {
-      eyebrow: "Alur rekrutmen yang bisa diikuti",
+      eyebrow: "Modul Recruitment+",
       statement: "Alur rekrutmen yang bisa diikuti.",
       intro:
         "Dari halaman lowongan yang bisa dicari kandidat sampai daftar kandidat yang siap ditinjau — tanpa email bolak-balik.",
@@ -357,7 +357,7 @@ export const CONNECTIONS = [
     icon: UserPlus,
   },
   {
-    name: "HRIS",
+    name: "Core HRIS",
     receives: "profil, kehadiran, struktur",
     emits: "data untuk payroll & kinerja",
     icon: Building2,

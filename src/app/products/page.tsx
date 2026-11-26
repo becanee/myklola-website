@@ -6,7 +6,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Products",
   description:
-    "Empat modul Klola — HRIS, Payroll, Performance Management, dan Recruitment+ — berbagi satu catatan kepegawaian.",
+    "Empat modul Klola — Core HRIS, Payroll, Performance Management, dan Recruitment+ — berbagi satu catatan kepegawaian.",
   alternates: { canonical: "/products" },
 };
 

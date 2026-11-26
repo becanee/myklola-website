@@ -35,6 +35,8 @@ src/app/page.tsx        landing = Navigation + 6 sections + Footer
 src/app/contact/page.tsx
 src/app/login/page.tsx  auth/login module (split banner + form)
 src/app/dash/page.tsx   protected placeholder; noindex
+src/app/products/page.tsx             overview; one page per product
+src/app/products/{hris,payroll,pm,recplus}/page.tsx
 src/app/not-found.tsx
 src/app/{sitemap,robots,manifest}.ts   generated metadata routes
 
@@ -45,6 +47,9 @@ src/modules/contacts/   index.tsx (page body), comp-form.tsx (RHF + zod form)
 src/modules/auth/login/ index.tsx (split layout), _comp/{banner,form}.tsx,
                         _logic.tsx (loginUser + useLogin)
 src/modules/auth/_comp/ logout-button.tsx
+src/modules/products/   index.tsx (contents-page overview),
+                        <slug>/{index.tsx,_comp/{hero,features,cta}.tsx},
+                        _comp/{atoms,sections,content}.tsx
 
 src/components/ui/      shadcn primitives (button, checkbox, label, textarea)
 src/components/motion/  beUI-registry motion primitives (input, select-morph,
@@ -54,7 +59,18 @@ src/lib/hooks/          use-hover-capable
 src/lib/utils.ts        cn()
 ```
 
-Section components are client components (`"use client"`) and are referenced by name from pages. `Navigation` and `FooterSection` are reused across the landing, contact, and not-found routes; each route renders its own `<Navigation />` and `<FooterSection />` rather than getting them from a layout. `/login` and `/dash` intentionally do not use them.
+Section components are client components (`"use client"`) and are referenced by name from pages. `Navigation` and `FooterSection` are reused across the landing, contact, products, and not-found routes; each route renders its own `<Navigation />` and `<FooterSection />` rather than getting them from a layout. `/login` and `/dash` intentionally do not use them.
+
+**Product pages are data-driven, not forked.** [content.ts](src/modules/products/_comp/content.ts) is the single source for each product's copy, icons and asset paths (`ProductContent`). [atoms.tsx](src/modules/products/_comp/atoms.tsx) holds the shared shells (`HeroShell`, `FeaturesShell`, `EssBand`, `CtaBand`, `SpecimenPlate`, `Eyebrow`); [sections.tsx](src/modules/products/_comp/sections.tsx) wraps hero/CTA so each product's `_comp/hero.tsx` and `_comp/cta.tsx` stay thin. Add a product by adding a `ProductContent` entry, a `<slug>/` module, and a route — do not copy markup.
+
+- Each product module `index.tsx` **must** keep `"use client"`. Without it the server component passes lucide icon components into client children and every page throws "Functions cannot be passed directly to Client Components".
+- `Eyebrow` draws a hairline that scales in and the label animates **transform only, never opacity** — that is what keeps the chrome visible if JS never runs. `layout.tsx` also carries a `<noscript>` rule that forces `main *` visible.
+- The overview's sticky specimen must not sit inside a transformed, filtered, or `overflow-hidden` ancestor; the row list scrolls it, driven by `onMouseEnter` **and** `onFocus`.
+
+### Product assets
+
+`public/products/` holds only `{hris,payroll,pm,recplus}-{hero,cta}.png`. The heroes are 774×678 cut-outs on **transparent** corners, so they sit on the page background with no card behind them. The four `-cta.png` are **byte-identical** (one studio shot on pure black), so `CtaBand` uses it as a desaturated backdrop under a navy wash with a per-product crop — never as a product screenshot. There is no features illustration; ESS is told on the HRIS page as an `EssBand` tile grid.
+
 
 ### Animation conventions
 

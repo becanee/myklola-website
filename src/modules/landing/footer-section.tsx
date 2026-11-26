@@ -2,32 +2,38 @@
 
 import { ArrowUpRight } from "lucide-react";
 import { AnimatedWave } from "./animated-wave";
+import Link from "next/link";
 
 const footerLinks = {
   Product: [
-    { name: "Klola Cloud", href: "https://klola.id/product/klola-cloud" },
+    { name: "Core HRIS", href: "/products/hris" },
     {
-      name: "Payroll Outsourcing",
-      href: "https://klola.id/product/payroll-outsourcing",
+      name: "Payroll",
+      href: "/products/payroll",
     },
     {
-      name: "Performance Management",
-      href: "https://klola.id/product/klola-pm",
+      name: "Performance",
+      href: "/products/pm",
+    },
+    {
+      name: "Recruitment+",
+      href: "/products/recplus",
     },
   ],
   Company: [
-    { name: "About", href: "https://klola.id/pages/about" },
-    { name: "Clients", href: "https://klola.id/pages/clients" },
+    { name: "About", href: "/about" },
+    { name: "Clients", href: "/clients" },
     {
       name: "Careers",
-      href: "https://klola.id/pages/careers",
+      href: "/careers",
       badge: "Hiring",
     },
+    { name: "Contact", href: "/contact" },
   ],
   Legal: [
-    { name: "Privacy", href: "https://klola.id/pages/privacy" },
-    { name: "Terms", href: "https://klola.id/pages/terms" },
-    { name: "Security", href: "https://klola.id/pages/security" },
+    { name: "Privacy & Policy", href: "/privacy" },
+    { name: "Terms & Condition", href: "/terms" },
+    { name: "Security", href: "/security" },
   ],
 };
 
@@ -52,13 +58,20 @@ export function FooterSection() {
             {/* Brand Column */}
             <div className="col-span-2">
               <a href="/" className="inline-flex items-center gap-2 mb-6">
-                <img src="/logo-blue.png" alt="Klola Logo" className="w-24" />
+                <div className="block">
+                  <img src="/logo-blue.png" alt="Klola Logo" className="w-40 -mt-8" />
+                  <p className="text-bolder leading-relaxed  max-w-xs">
+                    Managing people Anywhere, Anytime
+                  </p>
+                </div>
               </a>
 
+              <p className="text-bolder  max-w-xs">
+                Jakarta Indonesia,  (021) 75922910
+              </p>
+
               <p className="text-muted-foreground leading-relaxed mb-8 max-w-xs">
-                Your dedicated hub to explore product demos, submit tickets, and
-                connect directly with support. Everything you need to keep your
-                operations running seamlessly.
+                Pondok Indah Office Tower 2, Kota Jakarta Selatan, Daerah Khusus Ibukota Jakarta 12310
               </p>
 
               {/* Social Links */}
@@ -83,9 +96,8 @@ export function FooterSection() {
                 <ul className="space-y-4">
                   {links.map((link) => (
                     <li key={link.name}>
-                      <a
+                      <Link
                         href={link.href}
-                        target="_blank"
                         rel="noopener noreferrer"
                         className="text-sm text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-2"
                       >
@@ -95,7 +107,7 @@ export function FooterSection() {
                             {link.badge}
                           </span>
                         )}
-                      </a>
+                      </Link>
                     </li>
                   ))}
                 </ul>
@@ -107,14 +119,12 @@ export function FooterSection() {
         {/* Bottom Bar */}
         <div className="py-8 border-t border-foreground/10 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-sm text-muted-foreground">
-            {new Date().getFullYear()} PT. Klola Indonesia. Proudly made in
-            Indonesia.
+            &copy; {new Date().getFullYear()} PT. Klola Indonesia. All rights reserved.
           </p>
 
           <div className="flex items-center gap-4 text-sm text-muted-foreground">
             <span className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-green-500" />
-              All systems operational
+              Proudly made in Indonesia.
             </span>
           </div>
         </div>

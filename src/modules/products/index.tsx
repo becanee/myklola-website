@@ -105,6 +105,17 @@ export default function ProductsOverview() {
                 Arahkan kursor atau fokuskan baris di sebelah kiri untuk melihat
                 tampilan modul.
               </p>
+
+              <div className="mt-12 border-t border-foreground/10 pt-6">
+                <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground/70">
+                  Termasuk
+                </p>
+                <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
+                  <li>Modul ini bisa dipakai sendiri.</li>
+                  <li>Datanya mengalir ke modul lain.</li>
+                  <li>Implementasi dipandu tim Klola.</li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
@@ -120,13 +131,12 @@ export default function ProductsOverview() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-80px" }}
             transition={{ duration: dur(0.65), delay: dur(0.1), ease: EASE_OUT }}
-            className="mt-8 max-w-2xl font-display text-[clamp(1.7rem,3.6vw,2.8rem)] leading-[1.15] tracking-tight text-foreground"
+            className="mt-8 max-w-2xl font-display text-[clamp(1.6rem,3.2vw,2.5rem)] leading-[1.15] tracking-tight text-foreground"
           >
-            Recruitment+ mendatangkan kandidat. HRIS menyimpan profil dan
-            kehadirannya. Payroll menghitung dari data yang sama. Performance
-            membaca hasilnya.{" "}
+            Empat modul, satu data karyawan.
+            <br />
             <span className="text-muted-foreground">
-              ESS membuka pintu bagi karyawan.
+              ESS membukanya bagi karyawan.
             </span>
           </motion.p>
 

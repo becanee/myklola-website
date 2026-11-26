@@ -2,8 +2,8 @@ import type { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    short_name: 'Klola',
-    name: 'Klola Indonesia',
+    short_name: 'myKlola',
+    name: 'myKlola Indonesia',
     description: 'Managing People. Anywhere. Anytime',
     start_url: '/',
     display: 'standalone',

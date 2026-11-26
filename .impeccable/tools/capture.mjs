@@ -35,59 +35,62 @@ function send(method, params = {}, sessionId) {
   });
 }
 
-await send("Emulation.setDeviceMetricsOverride", {
-  width,
-  height,
-  deviceScaleFactor: 1,
-  mobile: width < 600,
+await send("Target.createTarget", { url: "about:blank" }).then(async ({ targetId }) => {
+  const { sessionId } = await send("Target.attachToTarget", { targetId, flatten: true });
+  return { targetId, sessionId };
+}).then(async (tab) => {
+  await send("Emulation.setDeviceMetricsOverride", {
+    width,
+    height,
+    deviceScaleFactor: 1,
+    mobile: width < 600,
+  }, tab.sessionId);
+
+  await send("Page.enable", {}, tab.sessionId);
+  await send("Runtime.enable", {}, tab.sessionId);
+  await send("Page.navigate", { url }, tab.sessionId);
+  await sleep(3500);
+
+  // Settle every viewport-triggered reveal, then let springs finish.
+  const scroll = await send(
+    "Runtime.evaluate",
+    {
+      expression: `(async () => {
+        const step = Math.round(window.innerHeight * 0.7);
+        for (let y = 0; y < document.body.scrollHeight; y += step) {
+          window.scrollTo(0, y);
+          await new Promise(r => setTimeout(r, 120));
+        }
+        window.scrollTo(0, document.body.scrollHeight);
+        await new Promise(r => setTimeout(r, 400));
+        window.scrollTo(0, 0);
+        await new Promise(r => setTimeout(r, 900));
+        return document.body.scrollHeight;
+      })()`,
+      awaitPromise: true,
+      returnByValue: true,
+    },
+    tab.sessionId,
+  );
+
+  const fullHeight = scroll.result?.value ?? height;
+
+  const shot = await send(
+    "Page.captureScreenshot",
+    {
+      format: "png",
+      captureBeyondViewport: true,
+      clip: { x: 0, y: 0, width, height: fullHeight, scale: 1 },
+    },
+    tab.sessionId,
+  );
+
+  const fs = await import("node:fs/promises");
+  await fs.writeFile(outFile, Buffer.from(shot.data, "base64"));
+  console.log(`${outFile} ${width}x${fullHeight}`);
+
+  await send("Target.closeTarget", { targetId: tab.targetId });
 });
 
-const { targetId } = await send("Target.createTarget", { url: "about:blank" });
-const { sessionId } = await send("Target.attachToTarget", { targetId, flatten: true });
-
-await send("Page.enable", {}, sessionId);
-await send("Runtime.enable", {}, sessionId);
-await send("Page.navigate", { url }, sessionId);
-await sleep(3500);
-
-// Settle every viewport-triggered reveal, then let springs finish.
-const scroll = await send(
-  "Runtime.evaluate",
-  {
-    expression: `(async () => {
-      const step = Math.round(window.innerHeight * 0.7);
-      for (let y = 0; y < document.body.scrollHeight; y += step) {
-        window.scrollTo(0, y);
-        await new Promise(r => setTimeout(r, 120));
-      }
-      window.scrollTo(0, document.body.scrollHeight);
-      await new Promise(r => setTimeout(r, 400));
-      window.scrollTo(0, 0);
-      await new Promise(r => setTimeout(r, 900));
-      return document.body.scrollHeight;
-    })()`,
-    awaitPromise: true,
-    returnByValue: true,
-  },
-  sessionId,
-);
-
-const fullHeight = scroll.result?.value ?? height;
-
-const shot = await send(
-  "Page.captureScreenshot",
-  {
-    format: "png",
-    captureBeyondViewport: true,
-    clip: { x: 0, y: 0, width, height: fullHeight, scale: 1 },
-  },
-  sessionId,
-);
-
-const fs = await import("node:fs/promises");
-await fs.writeFile(outFile, Buffer.from(shot.data, "base64"));
-console.log(`${outFile} ${width}x${fullHeight}`);
-
-await send("Target.closeTarget", { targetId });
 ws.close();
 process.exit(0);

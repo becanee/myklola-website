@@ -7,10 +7,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const navLinks = [
-  { name: "Home", href: "/" },
-  { name: "Products", href: "/products" },
-  { name: "Company", href: "/#how-it-works" },
-  { name: "Contact Us", href: "/contact" },
+  { name: "Beranda", href: "/" },
+  { name: "Ekosistem", href: "/products" },
+  { name: "Perusahaan", href: "/#how-it-works" },
+  { name: "Hubungi Kami", href: "/contact" },
 ];
 
 export function Navigation() {
@@ -25,6 +25,13 @@ export function Navigation() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // The mobile overlay is `fixed inset-0` and only fades out, so it keeps
+  // swallowing taps while invisible. Close it whenever the route changes —
+  // otherwise a Back press with the menu open leaves the page untappable.
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [pathname]);
 
   return (
     <header
@@ -56,7 +63,7 @@ export function Navigation() {
                   : "/logo-blue.png"
               }
               alt="Klola Logo"
-              className="w-14"
+              className="w-20"
             />
             {/* <span className={`font-display tracking-tight transition-all duration-500 ${isScrolled ? "text-xl" : "text-2xl"}`}>Klola</span>
             <span className={`text-muted-foreground font-mono -ml-2 transition-all duration-500 ${isScrolled ? "text-[10px] mt-1.5" : "text-xs mt-2"}`}>.id</span> */}
@@ -78,12 +85,12 @@ export function Navigation() {
 
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-4">
-            <Link href="/contact">
+            <Link href="/request-demo">
               <Button
                 size="sm"
                 className={`bg-foreground hover:bg-foreground/90 text-background rounded-full transition-all duration-500 ${isScrolled ? "px-4 h-8 text-xs" : "px-6"}`}
               >
-                Contact Us
+                Permintaan Demo
                 <ArrowRight className="w-2 h-2 transition-transform group-hover:translate-x-1" />
               </Button>
             </Link>
@@ -98,7 +105,7 @@ export function Navigation() {
             {isMobileMenuOpen ? (
               <X className="w-6 h-6" />
             ) : (
-              <Menu className="w-6 h-6" />
+              <Menu className={isScrolled ? "w-6 h-6" : "w-6 h-6 text-white"} />
             )}
           </button>
         </div>

@@ -19,9 +19,9 @@ const jetbrainsMono = JetBrains_Mono({
   variable: '--font-jetbrains'
 });
 
-const SITE_NAME = 'Klola Indonesia';
+const SITE_NAME = 'myKlola Indonesia';
 const APP_DESCRIPTION = 'Managing People. Anywhere. Anytime';
-const APP_URL = 'https://myklola.cloud';
+const APP_URL = 'https://myklola.app';
 
 export const metadata: Metadata = {
   title: {
@@ -30,8 +30,8 @@ export const metadata: Metadata = {
   },
   description: APP_DESCRIPTION,
   keywords: [
-    'Klola',
-    'Klola Indonesia',
+    'myKlola',
+    'myKlola Indonesia',
     'HRIS',
     'payroll',
     'manajemen SDM',

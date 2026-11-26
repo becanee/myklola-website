@@ -30,31 +30,28 @@ export function HeroSection() {
           {/* Copy */}
           <div>
             <h1
-              className={`text-4xl sm:text-5xl lg:text-[3.4rem] font-display leading-[1.1] tracking-tight transition-all duration-1000 ${
-                isVisible
-                  ? "opacity-100 translate-y-0"
-                  : "opacity-0 translate-y-6"
-              }`}
+              className={`text-4xl sm:text-5xl lg:text-[3.4rem] font-display leading-[1.1] tracking-tight transition-all duration-1000 ${isVisible
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 translate-y-6"
+                }`}
             >
-              HR Management System &{" "}
-              <span className="text-warning">Payroll Software</span>
+              Tingkatkan Efisiensi HR Perusahaan Anda
+              <span className="text-warning">dengan myklola</span>
             </h1>
             <p
-              className={`mt-6 text-lg leading-relaxed text-white/90 transition-all duration-1000 delay-150 ${
-                isVisible ? "opacity-100" : "opacity-0"
-              }`}
+              className={`mt-6 text-lg leading-relaxed text-white/90 transition-all duration-1000 delay-150 ${isVisible ? "opacity-100" : "opacity-0"
+                }`}
             >
-              <strong>Manajemen SDM. Dari mana saja. Kapan saja.</strong>
+              <strong>Managing people Anywhere, Anytime.</strong>
               <br />
               <br />
-              Klola membantu pengelolaan SDM di dalam organisasi menjadi mudah,
-              cepat dan akurat.
+              myklola adalah sistem manajemen HR terintegrasi yang dapat mengotomasikan proses administrasi karyawan melalui solusi modular, sehingga sistem internal perusahaan dapat terhubung secara fleksibel dan mudah disesuaikan dengan kebutuhan bisnis.
             </p>
             <Link
-              href="/contact"
+              href="/request-demo"
               className="mt-8 mr-4 inline-flex items-center gap-2 rounded-md bg-white text-primary px-6 py-3 font-semibold text-sm uppercase tracking-wide hover:opacity-90 transition-opacity"
             >
-              Hubungi Kami
+              Permintaan Demo
               <ArrowRight className="w-4 h-4" />
             </Link>
           </div>

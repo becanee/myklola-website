@@ -28,12 +28,13 @@ export function CtaSection() {
               viewport={{ once: true, margin: "-100px" }}
               transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             >
-              Uji coba produk, <span className="text-foreground/35">g</span>
-              <span className="text-foreground/35">r</span>
+              Siap Transformasi {" "}
+              <span className="text-foreground/35">Manajemen HR Anda?</span>
+              {/* <span className="text-foreground/35">r</span>
               <span className="text-foreground/35">a</span>
               <span className="text-foreground/35">t</span>
               <span className="text-foreground/35">i</span>
-              <span className="text-foreground/35">s</span>
+              <span className="text-foreground/35">s</span> */}
             </motion.h2>
             <motion.p
               className="mt-6 max-w-xl text-lg text-muted-foreground leading-relaxed"
@@ -46,8 +47,7 @@ export function CtaSection() {
                 ease: [0.16, 1, 0.3, 1],
               }}
             >
-              Tertarik dengan produk kami? Mulai uji coba gratis sekarang, atau
-              undang kami untuk demo langsung ke tim Anda.
+              Bergabunglah dengan 20+ perusahaan yang telah merasakan kemudahan mengelola HR dengan myklola. Uji coba sekarang Gratis, atau undang kami untuk demo.
             </motion.p>
           </div>
 
@@ -60,7 +60,7 @@ export function CtaSection() {
             transition={{ duration: 0.7, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
           >
             <Link
-              href="/contact"
+              href="/request-demo"
               className="group inline-flex items-center gap-4 px-8 py-6 bg-foreground text-background transition-colors duration-300 hover:bg-primary"
             >
               <span className="border border-current p-2 rounded-full transition-all duration-300 group-hover:rotate-45">

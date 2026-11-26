@@ -1,17 +1,11 @@
-import { FooterSection } from "@/modules/landing/footer-section";
-import { Navigation } from "@/modules/landing/navigation";
 import { ClientsSection } from "@/modules/landing/clients-section";
 import { CtaSection } from "@/modules/landing/cta-section";
+import { FooterSection } from "@/modules/landing/footer-section";
 import { HeroSection } from "@/modules/landing/hero-section";
+import { Navigation } from "@/modules/landing/navigation";
 import { ProductSections } from "@/modules/landing/product-sections";
 import { ServicesSection } from "@/modules/landing/services-section";
 import { TeamSection } from "@/modules/landing/team-section";
-import type { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "Klola Indonesia",
-  description: "Managing People. Anywhere. Anytime",
-};
 
 export default function Home() {
   return (

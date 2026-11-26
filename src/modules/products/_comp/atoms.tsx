@@ -152,9 +152,9 @@ export function SpecimenPlate({
       {(caption || index) && (
         <figcaption className="mt-3 flex items-center justify-between gap-4 font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
           <span>{index ? `${index} / ${caption}` : caption}</span>
-          <span className="tabular-nums text-muted-foreground/60">
+          {/* <span className="tabular-nums text-muted-foreground/60">
             {width}×{height}
-          </span>
+          </span> */}
         </figcaption>
       )}
     </figure>
@@ -196,7 +196,7 @@ export function HeroShell({
             delay={0.2}
             blur={8}
             yOffset="38%"
-            className="mt-6 font-display text-[clamp(2.6rem,6.4vw,4.6rem)] leading-[1.02] tracking-tight text-foreground"
+            className="mt-6 max-w-full break-words font-display text-[clamp(2.4rem,4.7vw,3.7rem)] leading-[1.04] tracking-tight text-foreground"
           />
 
           <motion.p
@@ -391,7 +391,7 @@ export function EssBand({
                       delay: dur(0.15 + i * 0.04),
                       ease: EASE_OUT,
                     }}
-                    className="bg-background p-4 lg:p-5"
+                    className="flex flex-col justify-center bg-background p-4 lg:p-5"
                   >
                     <Icon
                       className="size-4 text-primary"
@@ -513,12 +513,6 @@ export function CtaBand({
                 canHover && "group-hover:-translate-y-0.5 group-hover:translate-x-0.5",
               )}
             />
-          </Link>
-          <Link
-            href="/products"
-            className="inline-flex items-center gap-3 border border-white/25 px-6 py-3.5 text-sm font-semibold uppercase tracking-wide text-white transition-colors duration-300 hover:border-white/60 hover:bg-white/10"
-          >
-            Lihat produk lain
           </Link>
         </motion.div>
 

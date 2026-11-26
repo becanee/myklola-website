@@ -1,24 +1,14 @@
-import { FooterSection } from "@/modules/landing/footer-section";
-import { Navigation } from "@/modules/landing/navigation";
 import ContactModules from "@/modules/contacts";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Contact Us",
-  description: "Managing People. Anywhere. Anytime",
+  description:
+    "Tell us what your team is running into. Our team responds within one business day.",
 };
 
+// No Navigation/FooterSection: the contact page now owns its chrome, the same
+// way /login does. The module renders its own split-screen header and footer.
 export default function ContactPage() {
-  return (
-    <div className="min-h-screen bg-background overflow-x-hidden">
-      <Navigation />
-
-      {/* Spacer for fixed nav */}
-      <div className="h-24 sm:h-28" />
-
-      <ContactModules />
-
-      <FooterSection />
-    </div>
-  );
+  return <ContactModules />;
 }

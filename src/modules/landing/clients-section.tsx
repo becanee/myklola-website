@@ -47,7 +47,7 @@ export function ClientsSection() {
 
             <h2 className="mt-8 font-display text-[clamp(2.4rem,5vw,3.8rem)] leading-[1.05] tracking-tight text-foreground">
               Dipercaya lebih dari <br className="hidden sm:block" />
-              <span className="text-muted-foreground">300 perusahaan.</span>
+              <span className="text-muted-foreground">20 perusahaan.</span>
             </h2>
 
             <p className="mt-6 max-w-md text-base text-muted-foreground leading-relaxed">
@@ -57,7 +57,7 @@ export function ClientsSection() {
 
             <div className="mt-10 grid grid-cols-3 gap-px bg-foreground/10 w-fit">
               {[
-                ["99%", "Retensi klien"],
+                ["20+", "Clients"],
                 ["12y", "Pengalaman"],
                 ["24/7", "Dukungan"],
               ].map(([stat, label]) => (

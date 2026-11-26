@@ -1,8 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { ContactForm } from "./comp-form";
-const channels = [
+import { TextReveal } from "@/components/motion/text-reveal";
+import { EASE_OUT } from "@/lib/ease";
+import { motion, useReducedMotion } from "motion/react";
+import Link from "next/link";
+import { ContactBanner, type Channel } from "./_comp/banner";
+import { ContactForm } from "./_comp/comp-form";
+
+const channels: Channel[] = [
   {
     number: "01",
     label: "General Email",
@@ -19,128 +24,112 @@ const channels = [
   {
     number: "03",
     label: "Office Hours",
-    value: "Monday – Friday",
+    value: "Monday – Friday | 09:00 – 18:00 WIB (UTC+7)",
     desc: "09:00 – 18:00 WIB (UTC+7)",
   },
 ];
 
-function ScrollReveal({
-  children,
-  index = 0,
-  className = "",
-}: {
-  children: React.ReactNode;
-  index?: number;
-  className?: string;
-}) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.15 },
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-
-  return (
-    <div
-      ref={ref}
-      className={`transition-all duration-700 ease-out ${className} ${
-        isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-      }`}
-      style={{ transitionDelay: `${index * 120}ms` }}
-    >
-      {children}
-    </div>
-  );
-}
-
-function ChannelCard({
-  channel,
-  index,
-}: {
-  channel: (typeof channels)[0];
-  index: number;
-}) {
-  return (
-    <ScrollReveal index={index}>
-      <div className="group relative flex gap-6 py-8 border-b border-foreground/10 last:border-b-0">
-        {/* Number */}
-        <span className="shrink-0 font-mono text-sm text-muted-foreground pt-1 group-hover:text-foreground/80 transition-colors duration-500">
-          {channel.number}
-        </span>
-
-        {/* Content */}
-        <div className="flex-1 min-w-0">
-          <h3 className="text-xl lg:text-2xl font-display mb-1 group-hover:-translate-x-2 transition-transform duration-500">
-            {channel.label}
-          </h3>
-          <p className="text-sm text-foreground/80 font-mono mb-1">
-            {channel.value}
-          </p>
-          <p className="text-sm text-muted-foreground">{channel.desc}</p>
-        </div>
-      </div>
-    </ScrollReveal>
-  );
-}
-
+/**
+ * Same two-column chrome as `modules/auth/login/index.tsx`: brand panel on the
+ * left, a quiet header + scrolling form column on the right. The mobile order
+ * flips the banner below the form, so the reason to fill it in comes first.
+ */
 export default function ContactModules() {
+  const reduce = useReducedMotion();
+  const dur = (d: number) => (reduce ? 0 : d);
+
   return (
-    <main>
-      {/* Hero block */}
-      <section className="max-w-6xl mx-auto px-6 lg:px-8 pt-12 pb-16 lg:pt-16 lg:pb-20">
-        <ScrollReveal>
-          <div className="flex items-start gap-8">
-            <span className="font-mono text-sm text-muted-foreground shrink-0 hidden sm:block mt-0.5">
-              04
-            </span>
-            <div className="flex-1">
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-instrument tracking-tight text-foreground">
-                Contact us
-              </h1>
-              <p className="mt-5 text-lg leading-relaxed text-muted-foreground max-w-lg">
-                Fill in the form to send us a message directly, or reach us
-                through any of the channels below.
-              </p>
-            </div>
-          </div>
-        </ScrollReveal>
-      </section>
+    <div className="relative grid min-h-svh grid-cols-1 bg-background lg:grid-cols-2">
+      {/* Left — brand banner. Collapses to a short strip on mobile. */}
+      <div className="relative flex min-h-[300px] min-w-0 lg:min-h-svh">
+        <ContactBanner channels={channels} />
+      </div>
 
-      {/* Channel cards — sama pola dengan features-section.tsx */}
-      <section className="max-w-6xl mx-auto px-6 lg:px-8 pb-16 lg:pb-20">
-        {channels.map((ch, i) => (
-          <ChannelCard key={ch.number} channel={ch} index={i} />
-        ))}
-      </section>
+      {/* Right — form. `min-w-0` keeps the grid track from sizing to the
+          form's max-content width on narrow screens. */}
+      <div className="relative flex min-w-0 flex-col">
+        <header className="flex items-center justify-between px-6 py-6 sm:px-10 lg:px-14">
+          <Link
+            href="/"
+            className="text-sm text-foreground/70 underline-offset-4 transition-colors hover:text-foreground hover:underline"
+          >
+            ← Back to home
+          </Link>
 
-      {/* Form section */}
-      <section className="max-w-6xl mx-auto px-6 lg:px-8 pb-24 lg:pb-32">
-        <ScrollReveal>
-          <div className="flex items-start gap-8">
-            <span className="font-mono text-sm text-muted-foreground shrink-0 hidden sm:block mt-0.5">
-              05
-            </span>
-            <div className="flex-1">
-              <h2 className="text-2xl sm:text-3xl font-instrument tracking-tight text-foreground mb-8">
-                Send a message
-              </h2>
+          <Link
+            href="/products"
+            className="hidden text-sm text-foreground/70 underline-offset-4 transition-colors hover:text-foreground hover:underline sm:block"
+          >
+            Products
+          </Link>
+        </header>
+
+        <main className="flex flex-1 flex-col justify-center px-6 pb-14 pt-4 sm:px-10 lg:px-14">
+          <div className="w-full max-w-[460px]">
+            {/* Eyebrow — mirrors the login form's numbered kicker */}
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: dur(0.6), ease: EASE_OUT }}
+              className="flex items-center gap-3"
+            >
+              <span className="h-px w-8 bg-foreground/30" />
+              <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-muted-foreground">
+                Contact
+              </span>
+            </motion.div>
+
+            <TextReveal
+              as="h1"
+              text={["Talk to us."]}
+              split="word"
+              stagger={0.06}
+              delay={0.12}
+              yOffset="35%"
+              blur={8}
+              className="mt-5 font-display text-[clamp(2rem,4vw,2.75rem)] leading-[1.05] tracking-tight text-foreground"
+            />
+
+            <motion.p
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: dur(0.7), delay: dur(0.22), ease: EASE_OUT }}
+              className="mt-3 text-sm leading-relaxed text-muted-foreground"
+            >
+              Send a message and our team will respond within one business day.
+            </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: dur(0.7), delay: dur(0.3), ease: EASE_OUT }}
+              className="mt-9"
+            >
               <ContactForm />
+            </motion.div>
+
+            {/* Channels again, inline — the banner's list is desktop-only */}
+            <div className="mt-10 border-t border-foreground/10 pt-6 lg:hidden">
+              <dl className="space-y-4">
+                {channels.map((channel) => (
+                  <div key={channel.number}>
+                    <dt className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground/70">
+                      {channel.label}
+                    </dt>
+                    <dd className="mt-1 text-sm leading-relaxed text-foreground/80">
+                      {channel.value}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
             </div>
           </div>
-        </ScrollReveal>
-      </section>
-    </main>
+        </main>
+
+        <footer className="hidden px-6 pb-8 text-xs text-muted-foreground lg:block lg:px-14">
+          © 2026 PT. Klola Indonesia. All rights reserved.
+        </footer>
+      </div>
+    </div>
   );
 }
