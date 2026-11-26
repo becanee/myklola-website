@@ -36,11 +36,6 @@ const footerLinks = {
   ],
 };
 
-const socialLinks = [
-  { name: "Twitter", href: "#" },
-  { name: "GitHub", href: "#" },
-  { name: "LinkedIn", href: "#" },
-];
 
 export function FooterSection() {
   return (
