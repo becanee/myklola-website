@@ -4,7 +4,7 @@ import { Navigation } from "@/modules/landing/navigation";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "About",
+  title: "Tentang Kami",
   description:
     "Klola adalah perusahaan teknologi dengan fokus pada bidang SDM — membantu setiap organisasi mengelola SDM-nya dari mana saja dan kapan saja.",
 };

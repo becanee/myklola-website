@@ -2,6 +2,7 @@
 
 import { ArrowRight } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
+import Link from "next/link";
 
 const disciplines = [
   {
@@ -106,13 +107,13 @@ export function TeamSection() {
               viewport={{ once: true }}
               transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
             >
-              <a
-                href="https://klola.id/pages/about"
+              <Link
+                href="/about"
                 className="group inline-flex items-center gap-3 border border-white/20 px-6 py-3 text-sm font-semibold uppercase tracking-wide transition-colors hover:border-white hover:bg-white hover:text-foreground"
               >
                 Kenali tim kami
                 <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" />
-              </a>
+              </Link>
             </motion.div>
           </div>
         </div>

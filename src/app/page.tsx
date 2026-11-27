@@ -12,10 +12,10 @@ export default function Home() {
     <main className="relative min-h-screen overflow-x-hidden">
       <Navigation />
       <HeroSection />
+      <ClientsSection />
       <ServicesSection />
       <ProductSections />
       <TeamSection />
-      <ClientsSection />
       <CtaSection />
       <FooterSection />
     </main>

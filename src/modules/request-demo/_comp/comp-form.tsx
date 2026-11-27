@@ -38,17 +38,17 @@ export const INDUSTRIES = [
 ] as const;
 
 const formSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  jobTitle: z.string().min(2, "Job title must be at least 2 characters"),
-  company: z.string().min(2, "Company name must be at least 2 characters"),
-  industry: z.string().min(1, "Please select an industry"),
-  email: z.string().email("Invalid email format"),
+  name: z.string().min(2, "Nama minimal 2 karakter"),
+  jobTitle: z.string().min(2, "Jabatan minimal 2 karakter"),
+  company: z.string().min(2, "Nama perusahaan minimal 2 karakter"),
+  industry: z.string().min(1, "Silakan pilih bidang perusahaan"),
+  email: z.string().email("Format email tidak valid"),
   phone: z
     .string()
-    .min(8, "Phone number must be at least 8 digits")
-    .regex(/^[0-9+\-()\s]+$/, "Use digits, spaces, +, - or ( ) only"),
+    .min(8, "Nomor telepon minimal 8 digit")
+    .regex(/^[0-9+\-()\s]+$/, "Gunakan angka, spasi, +, -, atau ( ) saja"),
   agree: z.boolean().refine((val) => val === true, {
-    message: "You must agree before submitting",
+    message: "Anda harus menyetujui sebelum mengirim",
   }),
 });
 
@@ -96,7 +96,7 @@ export function RequestDemoForm() {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
       {/* Nama Lengkap */}
       <Input
-        placeholder="Your full name"
+        placeholder="Nama lengkap Anda"
         autoComplete="name"
         disabled={isSubmitting}
         onChange={(v: string) => setValue("name", v, { shouldValidate: true })}
@@ -109,7 +109,7 @@ export function RequestDemoForm() {
 
       {/* Jabatan */}
       <Input
-        placeholder="e.g. HR Manager"
+        placeholder="cth. HR Manager"
         autoComplete="organization-title"
         disabled={isSubmitting}
         onChange={(v: string) => setValue("jobTitle", v, { shouldValidate: true })}
@@ -122,7 +122,7 @@ export function RequestDemoForm() {
 
       {/* Nama Perusahaan */}
       <Input
-        placeholder="Company name"
+        placeholder="Nama perusahaan"
         autoComplete="organization"
         disabled={isSubmitting}
         onChange={(v: string) => setValue("company", v, { shouldValidate: true })}
@@ -169,7 +169,7 @@ export function RequestDemoForm() {
       {/* Email */}
       <Input
         type="email"
-        placeholder="you@company.com"
+        placeholder="anda@perusahaan.com"
         autoComplete="email"
         leftIcon={<Mail className="w-4 h-4" />}
         disabled={isSubmitting}
@@ -207,8 +207,8 @@ export function RequestDemoForm() {
           htmlFor="agree"
           className="text-xs leading-relaxed text-muted-foreground cursor-pointer"
         >
-          I agree that the information I provide will only be used to arrange
-          this demo by the Klola team.
+          Saya setuju bahwa informasi yang saya berikan hanya akan digunakan
+          untuk mengatur demo ini oleh tim Klola.
         </label>
       </div>
       {errors.agree && (
@@ -219,14 +219,14 @@ export function RequestDemoForm() {
       {result === "success" && (
         <div className="rounded-lg bg-emerald-50 border border-emerald-200 px-4 py-3 text-sm text-emerald-800 flex items-center gap-2">
           <Check className="w-4 h-4 shrink-0" />
-          Thank you. Our team will contact you within 1 business day to schedule
-          your demo.
+          Terima kasih. Tim kami akan menghubungi Anda dalam 1 hari kerja untuk
+          menjadwalkan demo.
         </div>
       )}
       {result === "error" && (
         <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-800 flex items-center gap-2">
           <AlertCircle className="w-4 h-4 shrink-0" />
-          Something went wrong. Please try again or contact us directly at
+          Terjadi kesalahan. Silakan coba lagi atau hubungi kami langsung di
           support@myklola.cloud.
         </div>
       )}
@@ -237,7 +237,7 @@ export function RequestDemoForm() {
         disabled={isSubmitting}
         className="mt-2 h-11 w-full"
       >
-        {isSubmitting ? "Sending..." : "Request demo"}
+        {isSubmitting ? "Mengirim..." : "Minta demo"}
       </Button>
     </form>
   );

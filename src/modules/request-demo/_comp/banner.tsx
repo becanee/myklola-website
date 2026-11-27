@@ -38,7 +38,7 @@ export function RequestDemoBanner({ steps }: { steps: DemoStep[] }) {
       />
 
       <div className="relative z-10 flex items-center justify-between">
-        <Link href="/" aria-label="Klola Indonesia — home" className="shrink-0">
+        <Link href="/" aria-label="Klola Indonesia — beranda" className="shrink-0">
           <img src="/logo-white.png" alt="Klola" className="w-14" />
         </Link>
       </div>
@@ -55,7 +55,7 @@ export function RequestDemoBanner({ steps }: { steps: DemoStep[] }) {
 
         <TextReveal
           as="p"
-          text={["See it running", "on your data."]}
+          text={["Lihat langsung", "dengan data Anda."]}
           split="word"
           stagger={0.07}
           delay={0.2}
@@ -65,8 +65,8 @@ export function RequestDemoBanner({ steps }: { steps: DemoStep[] }) {
         />
 
         <p className="mt-5 hidden max-w-[38ch] text-sm leading-relaxed text-white/60 sm:block">
-          Not a slide deck. We walk through the modules you care about using a
-          workspace shaped like your own team.
+          Bukan presentasi slide. Kami menelusuri modul yang Anda butuhkan
+          menggunakan ruang kerja yang menyerupai tim Anda.
         </p>
 
         {/* Steps — the banner's detail block in the contact banner's slot */}

@@ -1,25 +1,9 @@
 "use client";
 
+import { CLIENT_IDS, logoSrc } from "@/lib/client-logos";
 import { ArrowRight } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
-
-const clients = [
-  "C6AuvCyJrYusHm817oXu",
-  "oVzugCyhzr8d3TLLI7le",
-  "Hp7WnVdZTyqImeARXMwE",
-  "DcdRtLXIqivEHv1vIHmN",
-  "l2ixXjnuWph50ZyNBOzw",
-  "7URAV453czONAobLeMuR",
-  "mmZ0MIQfcfdn4QOW7tcK",
-  "tvcQS68i0or7LcYHyYlP",
-  "lXL0UAyPvzmGHn9gWJmI",
-  "hztYAcWox5Yzgxo2NNMW",
-  "X0rCfHiFYzG9kzH7bAUY",
-  "d3ZCAQsFgjw6Ehv8pQgX",
-];
-
-const src = (id: string) =>
-  `https://klola.id/images/March2019/${id}.png`;
+import Link from "next/link";
 
 export function ClientsSection() {
   const prefersReduced = useReducedMotion();
@@ -47,7 +31,7 @@ export function ClientsSection() {
 
             <h2 className="mt-8 font-display text-[clamp(2.4rem,5vw,3.8rem)] leading-[1.05] tracking-tight text-foreground">
               Dipercaya lebih dari <br className="hidden sm:block" />
-              <span className="text-muted-foreground">20 perusahaan.</span>
+              <span className="text-muted-foreground">27 perusahaan.</span>
             </h2>
 
             <p className="mt-6 max-w-md text-base text-muted-foreground leading-relaxed">
@@ -57,7 +41,7 @@ export function ClientsSection() {
 
             <div className="mt-10 grid grid-cols-3 gap-px bg-foreground/10 w-fit">
               {[
-                ["20+", "Clients"],
+                ["27+", "Clients"],
                 ["12y", "Pengalaman"],
                 ["24/7", "Dukungan"],
               ].map(([stat, label]) => (
@@ -75,7 +59,7 @@ export function ClientsSection() {
           <div className="lg:col-span-7">
             <div className="overflow-hidden [mask-image:linear-gradient(to_bottom,transparent,black_20%,black_80%,transparent)]">
               <div className="grid grid-cols-3 gap-4">
-                {clients.slice(0, 9).map((id, i) => (
+                {CLIENT_IDS.slice(0, 9).map((id, i) => (
                   <motion.div
                     key={id}
                     className="group flex aspect-square items-center justify-center rounded-lg border border-foreground/10 p-5 transition-colors duration-300 hover:border-foreground/30"
@@ -85,7 +69,7 @@ export function ClientsSection() {
                     transition={{ duration: 0.4, delay: (i % 3) * 0.06 }}
                   >
                     <img
-                      src={src(id)}
+                      src={logoSrc(id)}
                       alt={`Logo klien Klola`}
                       loading="lazy"
                       className="max-h-full w-full object-contain opacity-50 grayscale transition-all duration-500 group-hover:opacity-100 group-hover:grayscale-0"
@@ -102,13 +86,13 @@ export function ClientsSection() {
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
             >
-              <a
-                href="https://klola.id/pages/clients"
+              <Link
+                href="/clients"
                 className="group inline-flex items-center gap-3 text-sm font-semibold uppercase tracking-wide text-primary hover:gap-4 transition-all"
               >
                 Lihat semua klien
                 <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" />
-              </a>
+              </Link>
             </motion.div>
           </div>
         </div>

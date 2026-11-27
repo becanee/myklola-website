@@ -90,6 +90,9 @@ export default function ProductsOverview() {
           <div className="hidden lg:col-span-5 lg:block">
             <div className="sticky top-32">
               <PreviewSwap activeKey={active}>
+                {/* Image here, not the clip: this panel swaps on every hover,
+                    and a video would restart on each row change (on top of
+                    46–81MB per clip). Video lives on the product pages only. */}
                 <SpecimenPlate
                   src={current.hero.image}
                   alt={`Tangkapan layar ${current.longName} Klola`}
@@ -177,16 +180,6 @@ export default function ProductsOverview() {
                 </motion.div>
               );
             })}
-          </div>
-
-          <div className="mt-10">
-            <Link
-              href="/contact"
-              className="group inline-flex items-center gap-3 text-sm font-semibold uppercase tracking-wide text-primary transition-all hover:gap-4"
-            >
-              Bicarakan kebutuhan tim Anda
-              <ArrowUpRight className="size-4" aria-hidden />
-            </Link>
           </div>
         </div>
       </section>

@@ -19,7 +19,7 @@ const jetbrainsMono = JetBrains_Mono({
   variable: '--font-jetbrains'
 });
 
-const SITE_NAME = 'myKlola Indonesia';
+const SITE_NAME = 'Klola Indonesia';
 const APP_DESCRIPTION = 'Managing People. Anywhere. Anytime';
 const APP_URL = 'https://myklola.app';
 

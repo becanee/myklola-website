@@ -64,14 +64,7 @@ export default function RequestDemoModules() {
             href="/"
             className="text-sm text-foreground/70 underline-offset-4 transition-colors hover:text-foreground hover:underline"
           >
-            ← Back to home
-          </Link>
-
-          <Link
-            href="/contact"
-            className="hidden text-sm text-foreground/70 underline-offset-4 transition-colors hover:text-foreground hover:underline sm:block"
-          >
-            Contact
+            ← Kembali ke beranda
           </Link>
         </header>
 
@@ -86,13 +79,13 @@ export default function RequestDemoModules() {
             >
               <span className="h-px w-8 bg-foreground/30" />
               <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-muted-foreground">
-                Request demo
+                Permintaan demo
               </span>
             </motion.div>
 
             <TextReveal
               as="h1"
-              text={["Book a walkthrough."]}
+              text={["Jadwalkan demo."]}
               split="word"
               stagger={0.06}
               delay={0.12}
@@ -107,8 +100,8 @@ export default function RequestDemoModules() {
               transition={{ duration: dur(0.7), delay: dur(0.22), ease: EASE_OUT }}
               className="mt-3 text-sm leading-relaxed text-muted-foreground"
             >
-              Tell us about your team and we will prepare a session around the
-              modules you actually need.
+              Ceritakan tentang tim Anda dan kami akan menyiapkan sesi sesuai
+              modul yang benar-benar Anda butuhkan.
             </motion.p>
 
             <motion.div
@@ -139,7 +132,7 @@ export default function RequestDemoModules() {
         </main>
 
         <footer className="hidden px-6 pb-8 text-xs text-muted-foreground lg:block lg:px-14">
-          © 2026 PT. Klola Indonesia. All rights reserved.
+          © 2026 PT. Klola Indonesia. Seluruh hak cipta dilindungi.
         </footer>
       </div>
     </div>

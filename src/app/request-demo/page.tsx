@@ -2,9 +2,9 @@ import RequestDemoModules from "@/modules/request-demo";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Request a Demo",
+  title: "Permintaan Demo",
   description:
-    "See Klola running on a workspace shaped like your own team. Tell us about your organisation and we will schedule a 45-minute walkthrough.",
+    "Lihat Klola berjalan pada ruang kerja yang menyerupai tim Anda. Ceritakan organisasi Anda dan kami akan menjadwalkan sesi demo.",
 };
 
 // No Navigation/FooterSection: like /contact and /login, this page owns its

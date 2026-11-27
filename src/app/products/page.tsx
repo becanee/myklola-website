@@ -4,7 +4,7 @@ import ProductsOverview from "@/modules/products";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Products",
+  title: "Produk",
   description:
     "Empat modul Klola — Core HRIS, Payroll, Performance Management, dan Recruitment+ — berbagi satu catatan kepegawaian.",
   alternates: { canonical: "/products" },

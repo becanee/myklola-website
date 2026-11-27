@@ -4,7 +4,7 @@ import { Navigation } from "@/modules/landing/navigation";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Company",
+  title: "Perusahaan",
   description:
     "Tentang Klola, klien yang kami layani, dan posisi yang sedang kami buka — dalam satu halaman.",
 };

@@ -10,7 +10,8 @@ const navLinks = [
   { name: "Beranda", href: "/" },
   { name: "Produk", href: "/products" },
   { name: "Perusahaan", href: "/company" },
-  { name: "Hubungi Kami", href: "/contact" },
+  { name: "Klien", href: "/clients" },
+  { name: "Tentang Kami", href: "/about" },
 ];
 
 export function Navigation() {
@@ -85,12 +86,12 @@ export function Navigation() {
 
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-4">
-            <Link href="/request-demo">
+            <Link href="/contact">
               <Button
                 size="sm"
                 className={`bg-foreground hover:bg-foreground/90 text-background rounded-full transition-all duration-500 ${isScrolled ? "px-4 h-8 text-xs" : "px-6"}`}
               >
-                Permintaan Demo
+                Hubungi Kami
                 <ArrowRight className="w-2 h-2 transition-transform group-hover:translate-x-1" />
               </Button>
             </Link>
@@ -105,7 +106,7 @@ export function Navigation() {
             {isMobileMenuOpen ? (
               <X className="w-6 h-6" />
             ) : (
-              <Menu className={isScrolled ? "w-6 h-6" : "w-6 h-6 text-white"} />
+              <Menu className={isScrolled ? "w-6 h-6" : pathname === "/" && "w-6 h-6 text-white" ? "w-6 h-6 text-white" : "w-6 h-6"} />
             )}
           </button>
         </div>
@@ -156,14 +157,14 @@ export function Navigation() {
               className="flex-1 rounded-full h-14 text-base"
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              Close
+              Tutup
             </Button>
             <Link href="/contact">
               <Button
                 className="flex-1 bg-foreground text-background rounded-full h-14 text-base"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                Contact Us
+                Hubungi Kami
               </Button>
             </Link>
           </div>

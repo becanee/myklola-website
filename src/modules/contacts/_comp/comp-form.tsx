@@ -19,13 +19,13 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 const formSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Invalid email format"),
-  subject: z.string().min(3, "Subject must be at least 3 characters"),
-  category: z.string().min(1, "Please select a category"),
-  message: z.string().min(10, "Message must be at least 10 characters"),
+  name: z.string().min(2, "Nama minimal 2 karakter"),
+  email: z.string().email("Format email tidak valid"),
+  subject: z.string().min(3, "Subjek minimal 3 karakter"),
+  category: z.string().min(1, "Silakan pilih kategori"),
+  message: z.string().min(10, "Pesan minimal 10 karakter"),
   agree: z.boolean().refine(val => val === true, {
-    message: "You must agree before submitting",
+    message: "Anda harus menyetujui sebelum mengirim",
   }),
 });
 
@@ -79,25 +79,25 @@ export function ContactForm() {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
       {/* Name */}
       <Input
-        placeholder="Your name"
+        placeholder="Nama lengkap Anda"
         autoComplete="name"
         disabled={isSubmitting}
         onChange={(v: string) => setValue("name", v, { shouldValidate: true })}
         value={watch("name")}
-        label="Full name *"
+        label="Nama lengkap *"
         error={nameError}
         reserveErrorLine
       />
 
       {/* Subject */}
       <Input
-        placeholder="Brief summary of your inquiry"
+        placeholder="Ringkasan singkat pertanyaan Anda"
         disabled={isSubmitting}
         onChange={(v: string) =>
           setValue("subject", v, { shouldValidate: true })
         }
         value={watch("subject")}
-        label="Subject *"
+        label="Subjek *"
         error={subjectError}
         reserveErrorLine
       />
@@ -105,7 +105,7 @@ export function ContactForm() {
       {/* Email */}
       <Input
         type="email"
-        placeholder="your-email@example.com"
+        placeholder="email-anda@contoh.com"
         autoComplete="email"
         leftIcon={<Mail className="w-4 h-4" />}
         disabled={isSubmitting}
@@ -119,7 +119,7 @@ export function ContactForm() {
       {/* Category */}
       <div>
         <Label className="text-sm text-foreground/80">
-          Category <span className="text-destructive">*</span>
+          Kategori <span className="text-destructive">*</span>
         </Label>
         <MorphSelect
           value={category}
@@ -127,14 +127,14 @@ export function ContactForm() {
           onValueChange={(v) => setValue("category", v)}
         >
           <MorphSelectTrigger className="mt-2">
-            <MorphSelectValue placeholder="— Select a category —" />
+            <MorphSelectValue placeholder="— Pilih kategori —" />
           </MorphSelectTrigger>
           <MorphSelectContent className="max-h-[240px] overflow-y-auto">
-            <MorphSelectItem value="teknis">Technical issue</MorphSelectItem>
-            <MorphSelectItem value="billing">Billing & payment</MorphSelectItem>
-            <MorphSelectItem value="produk">Product question</MorphSelectItem>
-            <MorphSelectItem value="fitur">Feature suggestion</MorphSelectItem>
-            <MorphSelectItem value="lainnya">Other</MorphSelectItem>
+            <MorphSelectItem value="teknis">Masalah teknis</MorphSelectItem>
+            <MorphSelectItem value="billing">Tagihan & pembayaran</MorphSelectItem>
+            <MorphSelectItem value="produk">Pertanyaan produk</MorphSelectItem>
+            <MorphSelectItem value="fitur">Saran fitur</MorphSelectItem>
+            <MorphSelectItem value="lainnya">Lainnya</MorphSelectItem>
           </MorphSelectContent>
         </MorphSelect>
         {errors.category && (
@@ -148,11 +148,11 @@ export function ContactForm() {
       {/* Message */}
       <div>
         <Label htmlFor="message" className="text-sm text-foreground/80">
-          Message <span className="text-destructive">*</span>
+          Pesan <span className="text-destructive">*</span>
         </Label>
         <Textarea
           id="message"
-          placeholder="Briefly describe your needs..."
+          placeholder="Jelaskan kebutuhan Anda secara singkat..."
           rows={12}
           className="mt-2"
           {...{
@@ -183,8 +183,8 @@ export function ContactForm() {
           htmlFor="agree"
           className="text-xs leading-relaxed text-muted-foreground cursor-pointer"
         >
-          I agree that the information I provide will only be used to respond to
-          my inquiry by the Klola team.
+          Saya setuju bahwa informasi yang saya berikan hanya akan digunakan
+          untuk menanggapi pertanyaan saya oleh tim Klola.
         </label>
       </div>
       {errors.agree && (
@@ -195,14 +195,14 @@ export function ContactForm() {
       {result === "success" && (
         <div className="rounded-lg bg-emerald-50 border border-emerald-200 px-4 py-3 text-sm text-emerald-800 flex items-center gap-2">
           <Check className="w-4 h-4 shrink-0" />
-          Your message has been sent successfully. Our team will respond within
-          1 business day.
+          Pesan Anda berhasil terkirim. Tim kami akan merespons dalam 1 hari
+          kerja.
         </div>
       )}
       {result === "error" && (
         <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-800 flex items-center gap-2">
           <AlertCircle className="w-4 h-4 shrink-0" />
-          Something went wrong. Please try again or contact us directly at
+          Terjadi kesalahan. Silakan coba lagi atau hubungi kami langsung di
           support@myklola.cloud.
         </div>
       )}
@@ -213,7 +213,7 @@ export function ContactForm() {
         disabled={isSubmitting}
         className="mt-2 h-11 w-full"
       >
-        {isSubmitting ? "Sending..." : "Send message"}
+        {isSubmitting ? "Mengirim..." : "Kirim pesan"}
       </Button>
     </form>
   );

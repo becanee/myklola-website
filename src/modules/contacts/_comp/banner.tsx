@@ -48,7 +48,7 @@ export function ContactBanner({ channels }: { channels: Channel[] }) {
 
         <TextReveal
           as="p"
-          text={["We reply within", "one business day."]}
+          text={["Kami membalas", "dalam satu hari kerja."]}
           split="word"
           stagger={0.07}
           delay={0.2}
@@ -58,8 +58,8 @@ export function ContactBanner({ channels }: { channels: Channel[] }) {
         />
 
         <p className="mt-5 hidden max-w-[38ch] text-sm leading-relaxed text-white/60 sm:block">
-          Tell us what your team is running into — payroll cycles, attendance,
-          hiring — and we will route you to the person who knows it.
+          Ceritakan kendala tim Anda — siklus payroll, kehadiran, rekrutmen —
+          dan kami arahkan ke orang yang menanganinya.
         </p>
 
         {/* Channels — the banner's detail block in the login banner's slot */}

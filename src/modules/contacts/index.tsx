@@ -10,22 +10,22 @@ import { ContactForm } from "./_comp/comp-form";
 const channels: Channel[] = [
   {
     number: "01",
-    label: "General Email",
+    label: "Email Umum",
     value: "helpdesk@klola.id | sales@klola.id",
-    desc: "For questions & business partnerships",
+    desc: "Untuk pertanyaan & kemitraan bisnis",
   },
   {
     number: "02",
-    label: "Address",
+    label: "Alamat",
     value:
-      "Pondok Indah Office Tower 2, 17th Fl. Jl. Sultan Iskandar Muda Kav. V-TA Pondok Indah Jakarta Selatan 12310",
-    desc: "For official correspondence & document delivery",
+      "Pondok Indah Office Tower 2, Lantai 17. Jl. Sultan Iskandar Muda Kav. V-TA Pondok Indah Jakarta Selatan 12310",
+    desc: "Untuk korespondensi resmi & pengiriman dokumen",
   },
   {
     number: "03",
-    label: "Office Hours",
-    value: "Monday – Friday | 09:00 – 18:00 WIB (UTC+7)",
-    desc: "09:00 – 18:00 WIB (UTC+7)",
+    label: "Jam Operasional",
+    value: "Senin – Jumat | 09.00 – 18.00 WIB (UTC+7)",
+    desc: "09.00 – 18.00 WIB (UTC+7)",
   },
 ];
 
@@ -53,15 +53,15 @@ export default function ContactModules() {
             href="/"
             className="text-sm text-foreground/70 underline-offset-4 transition-colors hover:text-foreground hover:underline"
           >
-            ← Back to home
+            ← Kembali ke beranda
           </Link>
 
-          <Link
+          {/* <Link
             href="/products"
             className="hidden text-sm text-foreground/70 underline-offset-4 transition-colors hover:text-foreground hover:underline sm:block"
           >
             Products
-          </Link>
+          </Link> */}
         </header>
 
         <main className="flex flex-1 flex-col justify-center px-6 pb-14 pt-4 sm:px-10 lg:px-14">
@@ -75,13 +75,13 @@ export default function ContactModules() {
             >
               <span className="h-px w-8 bg-foreground/30" />
               <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-muted-foreground">
-                Contact
+                Kontak
               </span>
             </motion.div>
 
             <TextReveal
               as="h1"
-              text={["Talk to us."]}
+              text={["Hubungi kami."]}
               split="word"
               stagger={0.06}
               delay={0.12}
@@ -96,7 +96,7 @@ export default function ContactModules() {
               transition={{ duration: dur(0.7), delay: dur(0.22), ease: EASE_OUT }}
               className="mt-3 text-sm leading-relaxed text-muted-foreground"
             >
-              Send a message and our team will respond within one business day.
+              Kirim pesan dan tim kami akan merespons dalam satu hari kerja.
             </motion.p>
 
             <motion.div
@@ -127,7 +127,7 @@ export default function ContactModules() {
         </main>
 
         <footer className="hidden px-6 pb-8 text-xs text-muted-foreground lg:block lg:px-14">
-          © 2026 PT. Klola Indonesia. All rights reserved.
+          © 2026 PT. Klola Indonesia. Seluruh hak cipta dilindungi.
         </footer>
       </div>
     </div>

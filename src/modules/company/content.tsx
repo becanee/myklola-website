@@ -3,6 +3,8 @@
  * Careers — so this page stays a directory, not a second copy of them.
  */
 
+import { CLIENT_LOGOS } from "@/lib/client-logos";
+
 export type CompanySection = {
   number: string;
   title: string;
@@ -51,11 +53,4 @@ export const companySections: CompanySection[] = [
 ];
 
 /** A short strip of client logos for the Clients row. Reuses the roster. */
-export const featuredClients = [
-  "C6AuvCyJrYusHm817oXu",
-  "oVzugCyhzr8d3TLLI7le",
-  "Hp7WnVdZTyqImeARXMwE",
-  "DcdRtLXIqivEHv1vIHmN",
-  "l2ixXjnuWph50ZyNBOzw",
-  "7URAV453czONAobLeMuR",
-].map((id) => `https://klola.id/images/March2019/${id}.png`);
+export const featuredClients = CLIENT_LOGOS.slice(0, 6).map((logo) => logo.src);

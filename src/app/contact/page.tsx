@@ -2,9 +2,9 @@ import ContactModules from "@/modules/contacts";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Contact Us",
+  title: "Hubungi Kami",
   description:
-    "Tell us what your team is running into. Our team responds within one business day.",
+    "Ceritakan kendala tim Anda. Tim kami merespons dalam satu hari kerja.",
 };
 
 // No Navigation/FooterSection: the contact page now owns its chrome, the same

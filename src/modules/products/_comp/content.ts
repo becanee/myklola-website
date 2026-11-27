@@ -56,6 +56,8 @@ export type ProductContent = {
     title: string[];
     subtitle: string;
     image: string;
+    /** Product clip from `public/products-video/`. `image` doubles as poster. */
+    video: string;
     caption: string;
   };
 
@@ -109,6 +111,7 @@ export const PRODUCTS: ProductContent[] = [
       subtitle:
         "Data karyawan, struktur organisasi, kehadiran, dan laporan HR Manager ada di satu catatan yang sama. Termasuk Employee Self-Service untuk kebutuhan harian karyawan.",
       image: "/products/hris-hero.png",
+      video: "/products-video/Core HRIS.mp4",
       caption: "dasbor HR Manager",
     },
     features: {
@@ -172,6 +175,7 @@ export const PRODUCTS: ProductContent[] = [
       subtitle:
         "Register payroll per karyawan, komponen gaji, PPh 21, dan berkas bulanan yang tersimpan rapi — Januari sampai Desember dalam satu arsip.",
       image: "/products/payroll-hero.png",
+      video: "/products-video/Payroll.mp4",
       caption: "register payroll bulanan",
     },
     features: {
@@ -235,6 +239,7 @@ export const PRODUCTS: ProductContent[] = [
       subtitle:
         "9 Grid Matrix memetakan kinerja dan potensi tiap karyawan. Siklus penilaian, umpan balik, dan data per departemen ada dalam satu tampilan.",
       image: "/products/pm-hero.png",
+      video: "/products-video/Performance Management.mp4",
       caption: "9 Grid Matrix",
     },
     features: {
@@ -298,6 +303,7 @@ export const PRODUCTS: ProductContent[] = [
       subtitle:
         "Recruitment+ memasang lowongan, menyaring kandidat berdasarkan fungsi dan jenis lowongan, lalu menyimpan pendaftaran di satu alur.",
       image: "/products/recplus-hero.png",
+      video: "/products-video/Recruitment Plus.mp4",
       caption: "portal karier",
     },
     features: {

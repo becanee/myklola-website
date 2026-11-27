@@ -4,12 +4,12 @@ import { TextReveal } from "@/components/motion/text-reveal";
 import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
 import { EASE_IN_OUT, EASE_OUT } from "@/lib/ease";
 import { cn } from "@/lib/utils";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Pause, Play } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
-import { useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
 /**
  * Shared shells for the product pages. All four products render the same
@@ -155,6 +155,108 @@ export function SpecimenPlate({
           {/* <span className="tabular-nums text-muted-foreground/60">
             {width}×{height}
           </span> */}
+        </figcaption>
+      )}
+    </figure>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* SpecimenVideo — the product clip in the specimen frame              */
+/* ------------------------------------------------------------------ */
+
+/**
+ * The clips are 46–81MB, so playback is never assumed and never a surprise:
+ * muted autoplay is attempted only where motion is welcome, and an explicit
+ * pause control is always visible (WCAG 2.2.2). `autoPlay` is deliberately not
+ * a prop — `useReducedMotion()` is null on the server, and a prop that flips
+ * after hydration is the mismatch this codebase keeps fixing.
+ */
+export function SpecimenVideo({
+  src,
+  poster,
+  title,
+  caption,
+  index,
+  className,
+}: {
+  src: string;
+  poster: string;
+  title: string;
+  caption?: string;
+  index?: string;
+  className?: string;
+}) {
+  const dur = useDur();
+  const reduce = useReducedMotion();
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [playing, setPlaying] = useState(false);
+
+  useEffect(() => {
+    const el = videoRef.current;
+    if (!el || reduce) return;
+    el.play().catch(() => setPlaying(false));
+  }, [reduce, src]);
+
+  const toggle = () => {
+    const el = videoRef.current;
+    if (!el) return;
+    if (el.paused) {
+      el.play()
+        .then(() => setPlaying(true))
+        .catch(() => setPlaying(false));
+    } else {
+      el.pause();
+      setPlaying(false);
+    }
+  };
+
+  return (
+    <figure className={cn("relative", className)}>
+      <div className="relative border border-foreground/10 bg-card p-3 lg:p-4">
+        <CornerRules />
+        <div className="relative overflow-hidden bg-primary">
+          <motion.div
+            initial={{ scale: 1.04 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: dur(1.2), delay: dur(0.3), ease: EASE_OUT }}
+            className="relative aspect-video"
+          >
+            <video
+              ref={videoRef}
+              // encodeURI handles the spaces in the supplied filenames.
+              src={encodeURI(src)}
+              poster={poster}
+              muted={false}
+              loop
+              playsInline
+              preload="metadata"
+              aria-label={title}
+              onPlay={() => setPlaying(true)}
+              onPause={() => setPlaying(false)}
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+
+            {/* Pause control — always reachable, never hidden behind hover */}
+            <button
+              type="button"
+              onClick={toggle}
+              aria-label={playing ? `Jeda video ${title}` : `Putar video ${title}`}
+              className="absolute bottom-3 right-3 flex size-10 items-center justify-center rounded-full border border-white/25 bg-primary/70 text-white backdrop-blur-sm transition-colors duration-300 hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            >
+              {playing ? (
+                <Pause aria-hidden className="size-4" />
+              ) : (
+                <Play aria-hidden className="size-4" />
+              )}
+            </button>
+          </motion.div>
+        </div>
+      </div>
+
+      {(caption || index) && (
+        <figcaption className="mt-3 flex items-center justify-between gap-4 font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+          <span>{index ? `${index} / ${caption}` : caption}</span>
         </figcaption>
       )}
     </figure>
@@ -503,7 +605,7 @@ export function CtaBand({
           className="mt-9 flex flex-col gap-3 sm:flex-row"
         >
           <Link
-            href="/contact"
+            href="/request-demo"
             className="group inline-flex items-center gap-3 border border-white/25 bg-white px-6 py-3.5 text-sm font-semibold uppercase tracking-wide text-primary transition-colors duration-300 hover:bg-white/90"
           >
             Permintaan Demo
@@ -624,13 +726,25 @@ export function OverviewRow({
           />
         </span>
 
-        <ArrowUpRight
-          aria-hidden
-          className={cn(
-            "size-5 self-start text-foreground transition-transform duration-300",
-            canHover && hovered && "translate-x-0.5 -translate-y-0.5",
-          )}
-        />
+        {/* Explicit affordance: on desktop the arrow alone reads as decoration,
+            so it carries a label. On mobile the label is the affordance. */}
+        <span className="flex shrink-0 items-center gap-2 self-start pt-1">
+          <span
+            className={cn(
+              "font-mono text-[10px] uppercase tracking-[0.22em] transition-colors duration-300",
+              active ? "text-primary" : "text-muted-foreground/70",
+            )}
+          >
+            Detail
+          </span>
+          <ArrowUpRight
+            aria-hidden
+            className={cn(
+              "size-4 text-foreground transition-transform duration-300",
+              canHover && hovered && "translate-x-0.5 -translate-y-0.5",
+            )}
+          />
+        </span>
       </Link>
     </motion.div>
   );

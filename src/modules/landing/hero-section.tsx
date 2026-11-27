@@ -1,6 +1,7 @@
 "use client";
 
 import { ArrowRight } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -25,7 +26,7 @@ export function HeroSection() {
         <div className="absolute -top-32 -right-32 w-[500px] h-[500px] rounded-full bg-foreground/20 blur-3xl" />
       </div>
 
-      <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-10 py-20 lg:py-28 w-full">
+      <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-10 py-20 lg:py-28 w-full mt-12">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Copy */}
           <div>
@@ -35,8 +36,8 @@ export function HeroSection() {
                 : "opacity-0 translate-y-6"
                 }`}
             >
-              Tingkatkan Efisiensi HR Perusahaan Anda
-              <span className="text-warning">dengan myklola</span>
+              Tingkatkan Efisiensi HR Perusahaan Anda{" "}
+              <span className="text-warning">dengan Klola Indonesia</span>
             </h1>
             <p
               className={`mt-6 text-lg leading-relaxed text-white/90 transition-all duration-1000 delay-150 ${isVisible ? "opacity-100" : "opacity-0"
@@ -56,22 +57,21 @@ export function HeroSection() {
             </Link>
           </div>
 
-          {/* Video */}
+          {/* Image — transparent cut-out, so it sits straight on the navy
+              field with no card behind it. Shown at every breakpoint: on
+              mobile it stacks under the copy rather than disappearing. */}
           <div
-            className={`hidden lg:block transition-all duration-1000 delay-300 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
+            className={`transition-all duration-1000 delay-300 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
           >
-            <div className="rounded-xl overflow-hidden shadow-2xl ring-1 ring-white/20">
-              <video
-                width="640"
-                height="360"
-                controls
-                poster="/hero-bg.jpg"
-                className="w-full aspect-video bg-primary/70"
-              >
-                <source src="/klola.mp4" type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
-            </div>
+            <Image
+              src="/hero-image.png"
+              alt="Karyawan membuka aplikasi myKlola di ponsel didampingi dasbor HR di komputer"
+              width={1512}
+              height={1232}
+              sizes="(min-width: 1024px) 46vw, 92vw"
+              priority
+              className="mx-auto h-auto w-full max-w-[420px] lg:max-w-none"
+            />
           </div>
         </div>
       </div>

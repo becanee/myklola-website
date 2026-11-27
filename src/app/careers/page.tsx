@@ -4,7 +4,7 @@ import { Navigation } from "@/modules/landing/navigation";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Careers",
+  title: "Karir & Magang",
   description:
     "Bangun karir Anda dan ciptakan solusi HR terbaik bersama Klola. Lihat posisi karir dan magang yang sedang dibuka.",
 };

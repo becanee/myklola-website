@@ -21,14 +21,14 @@ const footerLinks = {
     },
   ],
   Company: [
-    { name: "About", href: "/about" },
-    { name: "Clients", href: "/clients" },
+    { name: "Tentang Kami", href: "/about" },
+    { name: "Klien", href: "/clients" },
     {
-      name: "Careers",
+      name: "Karir",
       href: "/careers",
       badge: "Hiring",
     },
-    { name: "Contact", href: "/contact" },
+    { name: "Kontak", href: "/contact" },
   ],
   Legal: [
     { name: "Privacy Policy", href: "/privacy" },
@@ -51,12 +51,12 @@ export function FooterSection() {
           <div className="grid grid-cols-2 md:grid-cols-6 gap-12 lg:gap-8">
             {/* Brand Column */}
             <div className="col-span-2">
-              <a href="/" className="inline-flex items-center gap-2 mb-6">
+              <a href="/" className="inline-flex items-center gap-2 mb-2">
                 <div className="block">
-                  <img src="/logo-blue.png" alt="Klola Logo" className="w-40 -mt-8" />
-                  <p className="text-bolder leading-relaxed  max-w-xs">
+                  <img src="/logo-blue-with-tagline.png" alt="Klola Logo" className="w-45 -mt-18 -ml-3.5" />
+                  {/* <p className="text-bolder leading-relaxed  max-w-xs">
                     Managing people Anywhere, Anytime
-                  </p>
+                  </p> */}
                 </div>
               </a>
 
