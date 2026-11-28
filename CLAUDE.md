@@ -17,7 +17,11 @@ npx tsc --noEmit # type check — the ONLY check that exists
 
 On Windows without Node on PATH, `bun x tsc --noEmit` works where `npx` is unavailable.
 
-Docker: multi-stage, `oven/bun` install → `node:22-bookworm-slim` build → standalone runner on port 3000. `.dockerignore` excludes `*.md` and `.env*` (except `.env.example`), so the image never carries local secrets.
+Docker: three alpine stages — `oven/bun:1-alpine` install → `node:22-alpine` build → `node:22-alpine` standalone runner on port 3000, running as `node` with a `HEALTHCHECK` on `/`. `.dockerignore` excludes `*.md` and `.env*` (except `.env.example`), so the image never carries local secrets. **No build args**: the gateway env vars are read at request time, so one image promotes across environments.
+
+[docker-compose.yml](docker-compose.yml) runs the built site alongside the `ghcr.io/uptimekit/worker` service with a shared `.env` and a `worker-events` volume.
+
+The image is ~28MB of app, but `public/` adds ~276MB — almost all of it `public/products-video/` (269MB). That is the dominant cost of a deploy, not the dependencies.
 
 **One `next dev` per repo.** A second instance refuses to start (`Another next dev server is already running`) even on a different port — the lock is in `.next/`. Kill the existing process before starting a new one.
 

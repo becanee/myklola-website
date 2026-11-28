@@ -1,93 +1,50 @@
-# ============================================
-# Stage 1: Dependencies Installation Stage
-# ============================================
+# syntax=docker/dockerfile:1
 
-# This Dockerfile is configured for Bun lockfile installs with a Node.js build
-# For npm/pnpm or yarn, refer to the Dockerfile instead
+# Next.js standalone image, sized for Dokploy.
+#
+# Three stages, and the runtime stage carries only the standalone server plus
+# the modules Next traced into it — no devDependencies, no source, no build
+# tools. No build args are required: GATEWAY_URL / PROJECT_ID /
+# GATEWAY_API_KEY are read inside the route handlers at request time, so one
+# image runs in every environment and the build never sees a secret.
 
-FROM oven/bun:1 AS dependencies
-
-# Set working directory
+# ---- dependencies ----------------------------------------------------------
+FROM oven/bun:1-alpine AS deps
 WORKDIR /app
+COPY package.json bun.lock ./
+RUN bun install --no-save
 
-# Copy package-related files first to leverage Docker's caching mechanism
-COPY package.json bun.lock* ./
-
-# Install project dependencies with frozen lockfile for reproducible builds
-RUN --mount=type=cache,target=/root/.bun/install/cache \
-    bun install --no-save
-
-# ============================================
-# Stage 2: Build Next.js application in standalone mode
-# ============================================
-
-FROM node:22-bookworm-slim AS builder
-
-# Set working directory
+# ---- build -----------------------------------------------------------------
+FROM node:22-alpine AS builder
 WORKDIR /app
-
-# Ensure public dir exists in image even when empty/untracked
-RUN mkdir -p public
-
-# Copy project dependencies from dependencies stage
-COPY --from=dependencies /app/node_modules ./node_modules
-
-# Copy application source code
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-
-ENV NODE_ENV=production
-
-# Next.js collects completely anonymous telemetry data about general usage.
-# Learn more here: https://nextjs.org/telemetry
-# Uncomment the following line in case you want to disable telemetry during the build.
-# ENV NEXT_TELEMETRY_DISABLED=1
-
-# Build Next.js application
+ENV NEXT_TELEMETRY_DISABLED=1
 RUN npx next build
 
-# ============================================
-# Stage 3: Run Next.js application
-# ============================================
-
-FROM node:22-bookworm-slim AS runner
-
-# Set working directory
+# ---- runtime ---------------------------------------------------------------
+FROM node:22-alpine AS runner
 WORKDIR /app
 
-# Set production environment variables
-ENV NODE_ENV=production
-ENV PORT=3000
-ENV HOSTNAME="0.0.0.0"
+# PORT is honoured by the standalone server. HOSTNAME must be 0.0.0.0 or the
+# container listens on loopback only and the reverse proxy cannot reach it.
+ENV NODE_ENV=production \
+    NEXT_TELEMETRY_DISABLED=1 \
+    PORT=3000 \
+    HOSTNAME=0.0.0.0
 
-# Next.js collects completely anonymous telemetry data about general usage.
-# Learn more here: https://nextjs.org/telemetry
-# Uncomment the following line in case you want to disable telemetry during the run time.
-# ENV NEXT_TELEMETRY_DISABLED=1
-
-# Copy production assets
+# Every copy is node-owned, so no chown or root step is needed at runtime.
 COPY --from=builder --chown=node:node /app/public ./public
-
-# Set the correct permission for prerender cache
-RUN mkdir .next
-RUN chown node:node .next
-
-# Automatically leverage output traces to reduce image size
-# https://nextjs.org/docs/advanced-features/output-file-tracing
 COPY --from=builder --chown=node:node /app/.next/standalone ./
 COPY --from=builder --chown=node:node /app/.next/static ./.next/static
 
-# If you want to persist the fetch cache generated during the build so that
-# cached responses are available immediately on startup, uncomment this line:
-# COPY --from=builder --chown=node:node /app/.next/cache ./.next/cache
-
-# Switch to non-root user for security best practices
 USER node
-
-# Expose port 3000 to allow HTTP traffic
 EXPOSE 3000
 
-# Origin publik untuk URL share (set sesuai domain, mis. https://zipt.site)
-# ENV APP_URL=
+# Actionable readiness probe. Docker's HEALTHCHECK does not expand ${PORT} in
+# the shell-free CMD form, so the port is written literally — if you change
+# PORT above, change it here too.
+HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
+  CMD wget -q --spider http://127.0.0.1:3000/ || exit 1
 
-# Start Next.js standalone server
 CMD ["node", "server.js"]
