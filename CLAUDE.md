@@ -15,7 +15,11 @@ npx tsc --noEmit # type check — the ONLY check that exists
 
 **No lint script, no ESLint config, and `next.config.mjs` sets `typescript.ignoreBuildErrors: true`.** `next build` will not fail on type errors — run `npx tsc --noEmit` yourself before declaring work done. There is no test suite.
 
+On Windows without Node on PATH, `bun x tsc --noEmit` works where `npx` is unavailable.
+
 Docker: multi-stage, `oven/bun` install → `node:22-bookworm-slim` build → standalone runner on port 3000. `.dockerignore` excludes `*.md` and `.env*` (except `.env.example`), so the image never carries local secrets.
+
+**One `next dev` per repo.** A second instance refuses to start (`Another next dev server is already running`) even on a different port — the lock is in `.next/`. Kill the existing process before starting a new one.
 
 ## Stack notes
 
@@ -24,72 +28,74 @@ Docker: multi-stage, `oven/bun` install → `node:22-bookworm-slim` build → st
 - shadcn/ui, `new-york` style, `@/components/ui`. `components.json` registers `@beui` → `https://beui.dev/r/{name}.json` as a component registry.
 - `motion` v14, imported as `motion/react` (not `framer-motion`).
 - Forms use `react-hook-form` + `zodResolver`; the beUI `Input` primitive is controlled via `value` / `onChange(value: string)`, not RHF `register`.
+- **Only four `ui/` primitives exist**: button, checkbox, label, textarea. There is no accordion, tabs, card, badge, or separator — build with plain elements or add one deliberately.
+- `text-warning` is used in [hero-section.tsx](src/modules/landing/hero-section.tsx) but is **not defined** in `globals.css`, so that phrase renders uncoloured. Use `text-primary`, `text-muted-foreground`, `font-display`; don't add `text-warning` to new code without defining the token.
 
 ## Architecture
 
-Two-tier composition. `src/app/**` holds routes only — thin files that assemble sections and export `metadata`. Real UI lives in `src/modules/**`, one folder per domain: `landing/` (one file per page section), `contacts/`, and `auth/`.
+Two-tier composition. `src/app/**` holds routes only — thin files that assemble sections and export `metadata`. Real UI lives in `src/modules/**`, one folder per domain.
 
-```
-src/app/layout.tsx      fonts, site metadata, <html>/<body>
-src/app/page.tsx        landing = Navigation + 6 sections + Footer
-src/app/contact/page.tsx
-src/app/login/page.tsx  auth/login module (split banner + form)
-src/app/dash/page.tsx   protected placeholder; noindex
-src/app/products/page.tsx             overview; one page per product
-src/app/products/{hris,payroll,pm,recplus}/page.tsx
-src/app/not-found.tsx
-src/app/{sitemap,robots,manifest}.ts   generated metadata routes
+| Route | Module | Notes |
+|---|---|---|
+| `/` | `landing/` | Navigation + 6 sections + Footer |
+| `/contact` | `contacts/` | Owns its chrome (no Navigation/Footer) |
+| `/request-demo` | `request-demo/` | Same split chrome as contact |
+| `/about`, `/clients`, `/careers`, `/company` | `about/`, `clients/`, `careers/`, `company/` | Each renders Navigation + module + Footer |
+| `/privacy`, `/terms` | `privacy/`, `terms/` | Both render through the shared `legal/` shell |
+| `/products` + 4 sub-pages | `products/` | Data-driven; see below |
+| `/login` | `auth/login/` | Owns its chrome |
+| `/dash` | route only | Protected placeholder, noindex |
 
-src/modules/landing/*   HeroSection, ServicesSection, ProductSections,
-                        TeamSection, ClientsSection, CtaSection,
-                        FooterSection, Navigation, AnimatedWave
-src/modules/contacts/   index.tsx (page body), comp-form.tsx (RHF + zod form)
-src/modules/auth/login/ index.tsx (split layout), _comp/{banner,form}.tsx,
-                        _logic.tsx (loginUser + useLogin)
-src/modules/auth/_comp/ logout-button.tsx
-src/modules/products/   index.tsx (contents-page overview),
-                        <slug>/{index.tsx,_comp/{hero,features,cta}.tsx},
-                        _comp/{atoms,sections,content}.tsx
+`Navigation` and `FooterSection` are **not** in a layout. Each route that wants them renders `<Navigation />` and `<FooterSection />` itself. `/login`, `/dash`, `/contact`, and `/request-demo` deliberately do not.
 
-src/components/ui/      shadcn primitives (button, checkbox, label, textarea)
-src/components/motion/  beUI-registry motion primitives (input, select-morph,
-                        text-reveal) + motion/not-found/
-src/lib/ease.ts         shared easing curves & spring configs
-src/lib/hooks/          use-hover-capable
-src/lib/utils.ts        cn()
-```
+### Products — the data-driven reference implementation
 
-Section components are client components (`"use client"`) and are referenced by name from pages. `Navigation` and `FooterSection` are reused across the landing, contact, products, and not-found routes; each route renders its own `<Navigation />` and `<FooterSection />` rather than getting them from a layout. `/login` and `/dash` intentionally do not use them.
+[content.ts](src/modules/products/_comp/content.ts) is the single source for each product's copy, icons, image, video and CTA (`ProductContent`). [atoms.tsx](src/modules/products/_comp/atoms.tsx) holds the shared shells; [sections.tsx](src/modules/products/_comp/sections.tsx) wraps them so each product's `_comp/{hero,video,features,cta}.tsx` is a thin wrapper.
 
-**Product pages are data-driven, not forked.** [content.ts](src/modules/products/_comp/content.ts) is the single source for each product's copy, icons and asset paths (`ProductContent`). [atoms.tsx](src/modules/products/_comp/atoms.tsx) holds the shared shells (`HeroShell`, `FeaturesShell`, `EssBand`, `CtaBand`, `SpecimenPlate`, `Eyebrow`); [sections.tsx](src/modules/products/_comp/sections.tsx) wraps hero/CTA so each product's `_comp/hero.tsx` and `_comp/cta.tsx` stay thin. Add a product by adding a `ProductContent` entry, a `<slug>/` module, and a route — do not copy markup.
+To add a product: add a `ProductContent` entry, a `<slug>/` module with those four wrappers, and a route. Do not copy markup.
 
 - Each product module `index.tsx` **must** keep `"use client"`. Without it the server component passes lucide icon components into client children and every page throws "Functions cannot be passed directly to Client Components".
-- `Eyebrow` draws a hairline that scales in and the label animates **transform only, never opacity** — that is what keeps the chrome visible if JS never runs. `layout.tsx` also carries a `<noscript>` rule that forces `main *` visible.
-- The overview's sticky specimen must not sit inside a transformed, filtered, or `overflow-hidden` ancestor; the row list scrolls it, driven by `onMouseEnter` **and** `onFocus`.
+- Section order is `<Hero /> <Video /> <Features /> <Cta />`. The hero holds the **image** plate; the video is its own band below it.
+- `Eyebrow` draws a hairline that scales in while the label animates **transform only, never opacity** — that keeps the chrome visible if JS never runs. `layout.tsx` carries a `<noscript>` rule forcing `main *` visible.
+- The overview's sticky specimen must not sit inside a transformed, filtered, or `overflow-hidden` ancestor. It is driven by `onMouseEnter` **and** `onFocus`.
 
 ### Product assets
 
-`public/products/` holds only `{hris,payroll,pm,recplus}-{hero,cta}.png`. The heroes are 774×678 cut-outs on **transparent** corners, so they sit on the page background with no card behind them. The four `-cta.png` are **byte-identical** (one studio shot on pure black), so `CtaBand` uses it as a desaturated backdrop under a navy wash with a per-product crop — never as a product screenshot. There is no features illustration; ESS is told on the HRIS page as an `EssBand` tile grid.
+- `public/products/{hris,payroll,pm,recplus}-hero.png` — 774×678, alpha 0 at all four corners (cut-outs), so they sit on the page with no card behind them.
+- `public/products/{…}-cta.png` — **all four byte-identical** (one studio shot on pure black). `CtaBand` uses it as a desaturated backdrop under a navy wash with a per-product crop, never as a product screenshot.
+- `public/products-video/*.mp4` — **note the plural folder**; the filenames contain spaces and are served through `encodeURI`. 46–81MB each, so `SpecimenVideo` uses `preload="metadata"`, the hero image as poster, muted looped `playsInline` playback started from an effect (never an `autoPlay` prop), and an always-visible pause button.
+- There is no features illustration; Employee Self-Service is told on the HRIS page as an `EssBand` tile grid. ESS is **part of HRIS**, not a route.
 
+### Legal pages
+
+`privacy/` and `terms/` each export a `LegalDocument` from their `content.tsx` and render it through [legal-page.tsx](src/modules/legal/_comp/legal-page.tsx), which owns the masthead, the sticky contents rail, scroll progress and the block renderers (`paragraph`, `clause`, `list`, `definitions`).
+
+**The legal copy is reproduced verbatim from approved text — never reword, merge or "tidy" a clause.** The content files say so at the top; keep that comment.
 
 ### Animation conventions
 
-Import named easing/spring tokens from [src/lib/ease.ts](src/lib/ease.ts) instead of inlining cubic-beziers or spring numbers — `EASE_OUT`, `EASE_IN_OUT`, `SPRING_PRESS`, `SPRING_PANEL`, `SPRING_LAYOUT`, etc.
+Import easing/spring tokens from [src/lib/ease.ts](src/lib/ease.ts) — `EASE_OUT`, `EASE_IN_OUT`, `SPRING_PRESS`, `SPRING_PANEL`, `SPRING_LAYOUT` — instead of inlining cubic-beziers or spring numbers.
 
+- **Never branch `initial` on `useReducedMotion()`** — the server cannot know the preference, so the renders disagree and React logs a hydration mismatch. Keep `initial` static and collapse `duration`/`delay` to 0 (the `const dur = (d) => (reduce ? 0 : d)` pattern). Newer modules in `products/`, `about/`, `clients/`, `careers/`, `company/`, `legal/`, `contacts/` all follow this. `landing/` and `not-found/` still use the old `initial={prefersReduced ? false : …}` form — fix it when you touch those files, don't copy it.
 - Gate hover-only effects behind `useHoverCapable()`; touch devices fire phantom sticky hovers.
-- **Never branch `initial` on `useReducedMotion()`** — the server can't know the preference, so the two renders disagree and React logs a hydration mismatch. Keep `initial` static and collapse `duration`/`delay` to 0 instead (see `TextReveal`, the login form, and the login banner). The older `initial={prefersReduced ? false : {...}}` pattern in the landing sections is the same bug and worth fixing when touched.
-- Scroll entrances use `whileInView` + `viewport={{ once: true }}`; staggered reveals in the contact module use a local `IntersectionObserver` `ScrollReveal` wrapper.
-- CSS keyframe utilities (`.marquee`, `.line-reveal`, `.animate-char-in`, `.noise-overlay`, `.border-sketch`, `.text-stroke`) are defined in the `@layer utilities` block of `globals.css`.
+- Scroll entrances use `whileInView` + `viewport={{ once: true }}`.
+- CSS utilities (`.marquee`, `.line-reveal`, `.animate-char-in`, `.noise-overlay`, `.border-sketch`, `.text-stroke`) live in the `@layer utilities` block of `globals.css`.
+
+**Static captures of `whileInView` content read as blank below the fold.** Scroll the page before judging a screenshot, or you will "fix" animation state as if it were a layout bug.
 
 ### Design language
 
-Editorial/print: Instrument Sans body, Instrument Serif display (`font-display` class), JetBrains Mono for eyebrows, indices and labels. Navy `#0B3464` on a near-white `oklch(0.985 0.002 90)` background; `--radius: 0.25rem` (deliberately sharp). Sections use numbered eyebrows, `max-w-[1400px]` containers, and `py-28 lg:py-36` rhythm. Landing copy is Indonesian; UI chrome and the contact page are English.
+Editorial/print: Instrument Sans body, Instrument Serif display (`font-display`), JetBrains Mono for eyebrows, indices and labels. Navy `#0B3464` on near-white `oklch(0.985 0.002 90)`; `--radius: 0.25rem` (deliberately sharp). Numbered eyebrows with a hairline rule, `max-w-[1400px]` containers, `px-6 lg:px-10`, `py-28 lg:py-36`, hairlines at `border-foreground/10`.
+
+**All user-facing copy is Indonesian**, including nav, buttons, form labels, validation messages and page metadata. Technical proper nouns stay as-is (phrases like *Payroll*, *9 Grid Matrix*, industry names). When adding a page, translate the `metadata` too.
 
 ### Content & data
 
-Page content is co-located as module-level `const` arrays inside each section file (`products`, `services`, `channels`, `navLinks`).
+Page content is co-located as module-level `const` in each module — either inside the section file (`landing/`) or in a `content.tsx` beside `index.tsx` (`about`, `clients`, `careers`, `company`, `privacy`, `terms`).
 
-**The contact form has no backend.** `onSubmit` in [comp-form.tsx](src/modules/contacts/comp-form.tsx) validates with zod and sets a success state; a `ponytail:` comment marks where the submission call belongs. Keep those `ponytail:` markers — they name deliberate simplifications and their upgrade path.
+- [client-logos.ts](src/lib/client-logos.ts) is the single roster: 19 ids, logos served from `public/clients/<id>.png`. `landing/clients-section.tsx` renders the first 9, `clients/` renders all, `company/` shows 6. Add a client by dropping the PNG in and appending the id.
+- **Neither form has a backend.** `contacts/_comp/comp-form.tsx` and `request-demo/_comp/comp-form.tsx` validate with zod and set a success state; a `ponytail:` comment marks where the submission call belongs. Keep those markers — they name deliberate simplifications and their upgrade path.
+- `careers/content.tsx` holds 10 dummy listings. Replace `JOBS` with a real feed when the ATS exists.
 
 ### Auth & API routes
 
@@ -104,27 +110,31 @@ Next.js sits between the browser and the Klola gateway: tokens are written to ht
 - All `/api/v1` responses go through `success()` / `failed()` in [responseWrapper.ts](src/lib/responseWrapper.ts) — one envelope (`success`, `httpCode`, `author`, `message`, `data`). Never hand-roll `NextResponse.json`, and never return tokens in the body.
 - Cookie names live in [auth-cookies.ts](src/lib/auth-cookies.ts): `__klola_access_token`, `__klola_refresh_token`, `__klola_user`. Route and proxy both import from there so they cannot drift.
 - Env is server-only: `GATEWAY_URL`, `PROJECT_ID`, `GATEWAY_API_KEY` have **no** `NEXT_PUBLIC_` prefix, so `next build` needs none of them and a Docker image without build args still works. Set them at container runtime; [.env.example](.env.example) documents the names.
-- The gateway requires `Authorization: Bearer $GATEWAY_API_KEY`; without it every call returns `401 {"error":"Missing API key"}`. A gateway `401` therefore means *our key is bad* (a 500 to the user), never *wrong password* — the login route maps `400` → "Invalid email or password", `429` → rate limited, `5xx` → unavailable.
-- The `/session` endpoint does **not** return `refreshTokenExpiresAt` (login does). The session route decodes the refresh JWT's `exp` claim instead — otherwise the refresh cookie degrades to a session cookie on every check.
-- "Keep me signed in" is expressed purely as cookie `maxAge`: unchecked omits it, producing session cookies. Both routes must agree on `path`/`secure`/`sameSite` or the browser stores a duplicate cookie instead of replacing it.
+- The gateway requires `Authorization: Bearer $GATEWAY_API_KEY`; without it every call returns `401 {"error":"Missing API key"}`. A gateway `401` therefore means *our key is bad* (a 500 to the user), never *wrong password* — login maps `400` → "Invalid email or password", `429` → rate limited, `5xx` → unavailable.
+- `/session` does **not** return `refreshTokenExpiresAt` (login does). The session route decodes the refresh JWT's `exp` claim instead — otherwise the refresh cookie degrades to a session cookie on every check.
+- "Keep me signed in" is purely cookie `maxAge`: unchecked omits it, producing session cookies. Both routes must agree on `path`/`secure`/`sameSite` or the browser stores a duplicate instead of replacing.
 - Client side: [\_logic.tsx](src/modules/auth/login/_logic.tsx) exports `loginUser()` and `useLogin()`. `loginUser` never throws for expected failures; it returns a discriminated `LoginResult`. The form, not the hook, owns post-login navigation.
 
 ### Route protection (Proxy)
 
-Next.js 16 renamed Middleware to Proxy. The guard is [src/proxy.ts](src/proxy.ts) exporting `proxy` (not `middleware`), with [src/routes.ts](src/routes.ts) as the single source of truth for `PUBLIC_ROUTES` / `PROTECTED_ROUTES`.
+Next.js 16 renamed Middleware to Proxy. The guard is [src/proxy.ts](src/proxy.ts) exporting `proxy` (not `middleware`), with [src/routes.ts](src/routes.ts) as the single source of truth.
 
-- Add new paths to `src/routes.ts` **before** creating them. Anything not listed is neither public nor protected — it simply passes through unguarded.
+- `PUBLIC_ROUTES` currently lists only `/`, `/contact`, `/login`. Everything else that is not `PROTECTED_ROUTES` passes through unguarded — the marketing routes rely on that and are **not** listed, so this file does not need editing for each new page.
 - `isProtectedRoute` is checked first, so public routes never run the session check. Keep it that way; the proxy runs per-request.
 - Matching is segment-aware: `/dash` covers `/dash` and `/dash/settings`, never `/dashx`.
-- **`/api` is excluded from the matcher.** The proxy calls `/api/v1/session` itself; matching it would recurse until the request dies. Protected pages never live under `/api`.
+- **`/api` is excluded from the matcher.** The proxy calls `/api/v1/session` itself; matching it would recurse until the request dies.
 - The proxy verifies by calling that session route with the incoming `Cookie` header and forwards the rotated `Set-Cookie` onto its own response — skip that and the browser keeps a refresh token the gateway already rotated away.
 - A gateway error fails **closed** (redirect to `/login`), never open.
-- The redirect is a UX gate, not authorization. When a page starts reading sensitive data, verify again in the Server Component or Server Function — a matcher change silently drops proxy coverage.
+- The redirect is a UX gate, not authorization. Verify again in the Server Component when a page starts reading sensitive data.
 
 ### SEO
 
-`metadataBase` is `https://myklola.cloud`. Site name/description/keywords/OpenGraph live in `layout.tsx`; per-route titles use the `%s | Klola Indonesia` template. Adding a public route means adding its URL to [src/app/sitemap.ts](src/app/sitemap.ts) — `/login` and `/dash` are deliberately absent and set `robots: { index: false }`.
+`metadataBase` and every generated metadata route use `https://myklola.app` (`layout.tsx`, `robots.ts`, `sitemap.ts`). Per-route titles use the `%s | Klola Indonesia` template, so a route exports only its own title.
 
-### Images
+Adding a public route means adding its URL to [src/app/sitemap.ts](src/app/sitemap.ts). Currently listed: `/`, `/contact`, `/request-demo`, `/products` and the four sub-pages. **`/about`, `/clients`, `/careers`, `/company`, `/privacy`, `/terms` are missing** — add them when touching SEO. `/login` and `/dash` are deliberately absent and set `robots: { index: false }`.
 
-`next.config.mjs` sets `images.unoptimized: true`, so `next/image` gets no optimization pipeline — large JPEGs and the `klola.mp4` clip in `public/` ship at full size.
+### Images & media
+
+`next.config.mjs` sets `images.unoptimized: true`, so `next/image` gets no optimization pipeline — assets ship at full size. Notable weights: `public/hero-image.png` 1.5MB, `public/products/*.png` 340–570KB, `public/products-video/*.mp4` 46–81MB. Re-encoding the videos (~720p, 2–3 Mbps) would cut them to roughly a tenth with no visible loss for a screen recording.
+
+Use `next/image` for any image inside the layout flow (explicit `width`/`height`, `sizes`, `priority` on the hero). Use a plain `<img>` for absolutely-positioned backdrops, where the optimization pass buys nothing.
