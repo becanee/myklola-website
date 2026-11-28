@@ -53,19 +53,31 @@ export function FooterSection() {
             <div className="col-span-2">
               <a href="/" className="inline-flex items-center gap-2 mb-2">
                 <div className="block">
-                  <img src="/logo-blue-with-tagline.png" alt="Klola Logo" className="w-45 -mt-18 -ml-3.5" />
+                  <img src="/logo-blue-with-tagline.png" alt="Klola Logo" className="w-45 -mt-10 md:-mt-18 -ml-3.5" />
                   {/* <p className="text-bolder leading-relaxed  max-w-xs">
                     Managing people Anywhere, Anytime
                   </p> */}
                 </div>
               </a>
 
-              <p className="text-bolder  max-w-xs">
-                Jakarta Indonesia,  (021) 75922910
+              <p className="text-muted-foreground leading-relaxed max-w-xs">
+                Klola Indonesia
+              </p>
+              <p className="text-muted-foreground leading-relaxed max-w-xs">
+                Pondok Indah Office Tower 2
+              </p>
+              <p className="text-muted-foreground leading-relaxed max-w-xs">
+                Jl.Sultan Iskandar Muda Kav.V-TA
+              </p>
+              <p className="text-muted-foreground leading-relaxed max-w-xs">
+                Jakarta Selatan, 12310
               </p>
 
-              <p className="text-muted-foreground leading-relaxed mb-8 max-w-xs">
-                Pondok Indah Office Tower 2, Kota Jakarta Selatan, Daerah Khusus Ibukota Jakarta 12310
+               <p className="text-bolder  max-w-xs">
+                (021) 7592 2910
+              </p>
+               <p className="text-bolder  max-w-xs">
+                helpdesk@klola.id
               </p>
 
               {/* Social Links */}

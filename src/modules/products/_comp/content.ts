@@ -109,7 +109,7 @@ export const PRODUCTS: ProductContent[] = [
       eyebrow: "Core HRIS",
       title: ["Satu profil untuk", "setiap orang."],
       subtitle:
-        "Data karyawan, struktur organisasi, kehadiran, dan laporan HR Manager ada di satu catatan yang sama. Termasuk Employee Self-Service untuk kebutuhan harian karyawan.",
+        "Core HRIS mengelola seluruh siklus data karyawan secara komprehensif, di mana setiap pembaruan status kepegawaian otomatis terintegrasi dengan struktur organisasi dan sistem manajemen kinerja. Sebagai bagian di dalamnya, fitur Employee Self Service (ESS) memudahkan karyawan menangani berbagai kebutuhan administrasi harian secara mandiri melalui satu aplikasi yang terhubung langsung dengan sistem penggajian dan alur persetujuan atasan.",
       image: "/products/hris-hero.png",
       video: "/products-video/Core HRIS.mp4",
       caption: "dasbor HR Manager",
@@ -173,7 +173,7 @@ export const PRODUCTS: ProductContent[] = [
       eyebrow: "Payroll",
       title: ["Gaji yang bisa", "dipertanggungjawabkan."],
       subtitle:
-        "Register payroll per karyawan, komponen gaji, PPh 21, dan berkas bulanan yang tersimpan rapi — Januari sampai Desember dalam satu arsip.",
+        "Kelola penggajian bulanan secara otomatis, mulai dari perhitungan komponen gaji hingga integrasi data kehadiran. Dengan fleksibilitas pengaturan pajak Gross dan Nett yang mengikuti regulasi terbaru, perusahaan dapat menyelesaikan proses penggajian secara akurat dan minim risiko hanya dalam hitungan detik.",
       image: "/products/payroll-hero.png",
       video: "/products-video/Payroll.mp4",
       caption: "register payroll bulanan",
@@ -237,7 +237,7 @@ export const PRODUCTS: ProductContent[] = [
       eyebrow: "Performance",
       title: ["Kinerja yang terlihat,", "bukan terasa."],
       subtitle:
-        "9 Grid Matrix memetakan kinerja dan potensi tiap karyawan. Siklus penilaian, umpan balik, dan data per departemen ada dalam satu tampilan.",
+        "Tingkatkan transparansi dan produktivitas tim menggunakan myklola PM 2.0 untuk mengelola seluruh siklus kinerja karyawan secara efektif. Mulai dari penyusunan sasaran, pemantauan pencapaian, hingga evaluasi hasil kerja, sistem ini mendorong terciptanya budaya umpan balik berkelanjutan di setiap departemen. Dukungan fitur penilaian dari berbagai penilai serta pemetaan tingkat kinerja berbasis matriks sembilan kotak memastikan setiap keputusan pengembangan karyawan didasarkan pada data yang akurat.",
       image: "/products/pm-hero.png",
       video: "/products-video/Performance Management.mp4",
       caption: "9 Grid Matrix",
@@ -301,7 +301,7 @@ export const PRODUCTS: ProductContent[] = [
       eyebrow: "Recruitment+",
       title: ["Dari lowongan", "ke kandidat."],
       subtitle:
-        "Recruitment+ memasang lowongan, menyaring kandidat berdasarkan fungsi dan jenis lowongan, lalu menyimpan pendaftaran di satu alur.",
+        "Kelola seluruh siklus perekrutan secara lebih terukur dengan modul rekrutmen myklola yang dirancang untuk mengoptimalkan kinerja tim rekruter, administrator, sekaligus memberikan kemudahan akses bagi para pelamar. Perpaduan teknologi kecerdasan buatan dan perangkat uji kompetensi menyeluruh membantu perusahaan mengevaluasi kandidat secara objektif sejak tahap permintaan tenaga kerja diajukan hingga keputusan penerimaan ditetapkan.",
       image: "/products/recplus-hero.png",
       video: "/products-video/Recruitment Plus.mp4",
       caption: "portal karier",

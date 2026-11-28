@@ -111,7 +111,7 @@ export function TeamSection() {
                 href="/about"
                 className="group inline-flex items-center gap-3 border border-white/20 px-6 py-3 text-sm font-semibold uppercase tracking-wide transition-colors hover:border-white hover:bg-white hover:text-foreground"
               >
-                Kenali tim kami
+                Tentang Kami
                 <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" />
               </Link>
             </motion.div>

@@ -118,7 +118,7 @@ export const privacyDocument: LegalDocument = {
         },
         {
           kind: "paragraph",
-          text: "To exercise these rights, please contact us at support@klola.id. We will respond to your request within a reasonable timeframe.",
+          text: "To exercise these rights, please contact us at helpdesk@klola.id. We will respond to your request within a reasonable timeframe.",
         },
       ],
     },
@@ -138,7 +138,7 @@ export const privacyDocument: LegalDocument = {
       blocks: [
         {
           kind: "paragraph",
-          text: "If you have any questions, concerns, or requests regarding this Privacy Policy, please contact us at support@klola.id.",
+          text: "If you have any questions, concerns, or requests regarding this Privacy Policy, please contact us at helpdesk@klola.id.",
         },
       ],
     },

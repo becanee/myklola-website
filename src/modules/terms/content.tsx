@@ -89,7 +89,7 @@ export const termsDocument: LegalDocument = {
         },
         {
           kind: "paragraph",
-          text: "The Customer is responsible for protecting login credentials and for all activities performed through its registered accounts. The Customer must notify Klola Indonesia promptly at support@klola.id upon discovering any unauthorized access.",
+          text: "The Customer is responsible for protecting login credentials and for all activities performed through its registered accounts. The Customer must notify Klola Indonesia promptly at helpdesk@klola.id upon discovering any unauthorized access.",
         },
         {
           kind: "paragraph",
@@ -141,7 +141,7 @@ export const termsDocument: LegalDocument = {
         },
         {
           kind: "paragraph",
-          text: "Technical support is available during standard operational hours from Monday through Friday between 09:00 and 18:00 WIB excluding Indonesian national holidays. Support inquiries sent to support@klola.id are reviewed and prioritized according to issue severity under the applicable Service Level Agreement.",
+          text: "Technical support is available during standard operational hours from Monday through Friday between 09:00 and 18:00 WIB excluding Indonesian national holidays. Support inquiries sent to helpdesk@klola.id are reviewed and prioritized according to issue severity under the applicable Service Level Agreement.",
         },
         {
           kind: "paragraph",
@@ -194,7 +194,7 @@ export const termsDocument: LegalDocument = {
         },
         {
           kind: "paragraph",
-          text: "Individuals may request access correction or deletion of their Personal Data by contacting support@klola.id.",
+          text: "Individuals may request access correction or deletion of their Personal Data by contacting helpdesk@klola.id.",
         },
       ],
     },
@@ -339,7 +339,7 @@ export const termsDocument: LegalDocument = {
             },
             {
               term: "Contact",
-              text: "Questions legal notices or privacy requests regarding these Terms of Service may be sent to Klola Indonesia at support@klola.id.",
+              text: "Questions legal notices or privacy requests regarding these Terms of Service may be sent to Klola Indonesia at helpdesk@klola.id.",
             },
           ],
         },
